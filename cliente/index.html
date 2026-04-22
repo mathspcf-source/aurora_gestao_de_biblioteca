@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Aurora • Painel da Biblioteca</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+        body{background:#0a0e27;height:100vh;overflow:hidden}
+        
+        .login-screen{position:fixed;top:0;left:0;width:100%;height:100vh;background:linear-gradient(135deg,#0a0e27 0%,#1a1f4e 100%);display:flex;align-items:center;justify-content:center;z-index:1000}
+        .login-screen.hidden{display:none}
+        .login-box{background:rgba(255,255,255,0.03);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:40px 36px;width:100%;max-width:400px;box-shadow:0 25px 50px rgba(0,0,0,0.4)}
+        .login-logo{text-align:center;margin-bottom:32px}
+        .login-logo i{font-size:2.8rem;color:white;filter:drop-shadow(0 0 20px rgba(124,92,255,0.5))}
+        .login-logo h1{font-size:2rem;font-weight:700;color:white;margin-top:10px}
+        .login-logo h1 span{background:linear-gradient(135deg,#7c5cff,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .login-logo p{color:#a0aec0;margin-top:4px;font-size:0.9rem}
+        .library-badge{background:linear-gradient(135deg,#7c5cff,#5b3cc4);padding:5px 16px;border-radius:30px;font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:white;display:inline-block;margin-top:12px}
+        .input-group{margin-bottom:20px}
+        .input-group label{display:block;color:#cbd5e0;margin-bottom:6px;font-weight:500;font-size:0.85rem}
+        .input-field{position:relative}
+        .input-field i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:white;font-size:1rem}
+        .input-field input{width:100%;padding:12px 12px 12px 42px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;color:white;font-size:0.9rem}
+        .input-field input:focus{outline:none;border-color:#7c5cff;background:rgba(124,92,255,0.08)}
+        .btn-login{width:100%;padding:13px;background:linear-gradient(135deg,#7c5cff,#5b3cc4);border:none;border-radius:12px;color:white;font-weight:600;font-size:0.95rem;cursor:pointer;margin-top:8px}
+        .btn-login:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(124,92,255,0.4)}
+        .error-message{color:#ef4444;text-align:center;margin-top:12px;font-size:0.8rem;display:none}
+        .contact-support{text-align:center;margin-top:24px;color:#8892b0;font-size:0.75rem}
+        .contact-support a{color:#a78bfa;text-decoration:none}
+        
+        .main-panel{display:none;height:100vh;background:#0a0e27;overflow:hidden}
+        .main-panel.active{display:flex}
+        .sidebar{width:260px;background:linear-gradient(180deg,#0f1433 0%,#0a0e27 100%);border-right:1px solid rgba(255,255,255,0.04);display:flex;flex-direction:column;padding:24px 0;height:100vh;overflow-y:auto}
+        .sidebar-logo{padding:0 18px 24px 24px;border-bottom:1px solid rgba(124,92,255,0.15);margin-bottom:24px}
+        .sidebar-logo h2{font-size:1.6rem;font-weight:700;color:white}
+        .sidebar-logo h2 span{background:linear-gradient(135deg,#7c5cff,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .library-info-sidebar{margin-top:6px;color:#a0aec0;font-size:0.8rem}
+        .nav-menu{flex:1;padding:0 14px}
+        .nav-item{display:flex;align-items:center;gap:12px;padding:11px 16px;margin:2px 0;border-radius:12px;color:#a0aec0;font-weight:500;font-size:0.9rem;cursor:pointer;transition:all 0.2s}
+        .nav-item i{width:22px;font-size:1.1rem}
+        .nav-item:hover{background:rgba(124,92,255,0.1);color:white}
+        .nav-item.active{background:linear-gradient(135deg,#7c5cff,#5b3cc4);color:white}
+        .nav-divider{height:1px;background:rgba(255,255,255,0.04);margin:16px 14px}
+        .plan-info{padding:18px 20px;background:rgba(124,92,255,0.04);margin:16px 14px;border-radius:14px;border:1px solid rgba(124,92,255,0.15)}
+        .plan-info h4{color:white;margin-bottom:10px;font-size:0.9rem}
+        .plan-usage p{color:#a0aec0;font-size:0.8rem;margin-bottom:3px}
+        .progress-bar{height:5px;background:rgba(255,255,255,0.08);border-radius:10px;overflow:hidden;margin:6px 0}
+        .progress-fill{height:100%;background:linear-gradient(90deg,#7c5cff,#a78bfa);border-radius:10px}
+        
+        .content-area{flex:1;padding:24px 32px;overflow-y:auto;height:100vh}
+        .top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
+        .page-title h1{font-size:1.8rem;font-weight:700;color:white;margin-bottom:2px}
+        .page-title p{color:#a0aec0;font-size:0.9rem}
+        .user-profile{display:flex;align-items:center;gap:16px}
+        .notification-icon{background:rgba(255,255,255,0.04);width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-size:1.2rem;cursor:pointer;border:1px solid rgba(255,255,255,0.06);position:relative}
+        .notification-badge{position:absolute;top:-3px;right:-3px;background:#ef4444;color:white;font-size:0.6rem;font-weight:bold;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+        .profile-info{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.03);padding:6px 18px 6px 12px;border-radius:40px;border:1px solid rgba(255,255,255,0.06)}
+        .profile-info i{color:white;font-size:1.3rem}
+        .profile-info span{color:white;font-weight:500;font-size:0.9rem}
+        .logout-btn{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:#f87171;padding:8px 18px;border-radius:12px;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:0.85rem}
+        .logout-btn:hover{background:rgba(239,68,68,0.15)}
+        
+        .page{display:none}
+        .page.active{display:block}
+        
+        .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:32px}
+        .stat-card{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.04);border-radius:18px;padding:20px}
+        .stat-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+        .stat-header h3{color:#a0aec0;font-size:0.85rem;font-weight:500}
+        .stat-icon{width:42px;height:42px;background:rgba(124,92,255,0.1);border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-size:1.3rem}
+        .stat-number{font-size:2.2rem;font-weight:700;color:white}
+        
+        .table-container{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);border-radius:16px;overflow:hidden;margin-top:20px}
+        .table-header{display:grid;padding:14px 20px;background:rgba(124,92,255,0.08);color:#cbd5e0;font-weight:600;font-size:0.75rem;text-transform:uppercase}
+        .table-row{display:grid;padding:16px 20px;align-items:center;border-bottom:1px solid rgba(255,255,255,0.03);color:white;font-size:0.9rem}
+        .table-row:last-child{border-bottom:none}
+        .table-row:hover{background:rgba(124,92,255,0.04)}
+        
+        .btn-primary{background:linear-gradient(135deg,#7c5cff,#5b3cc4);color:white;border:none;padding:11px 22px;border-radius:12px;font-weight:500;font-size:0.9rem;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+        .btn-primary:hover{transform:translateY(-1px)}
+        .btn-secondary{background:rgba(255,255,255,0.04);color:white;border:1px solid rgba(255,255,255,0.08);padding:10px 20px;border-radius:12px;font-weight:500;font-size:0.9rem;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+        .action-buttons{display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+        
+        .status-badge{padding:4px 10px;border-radius:20px;font-size:0.7rem;font-weight:600;display:inline-block}
+        .status-available{background:rgba(16,185,129,0.15);color:#34d399}
+        .status-loaned{background:rgba(245,158,11,0.15);color:#fbbf24}
+        .status-overdue{background:rgba(239,68,68,0.15);color:#f87171}
+        .action-icon{color:white;cursor:pointer;margin:0 6px;font-size:0.95rem}
+        .action-icon:hover{color:#a78bfa}
+        .action-icon.delete{color:#f87171}
+        .action-icon.delete:hover{color:#ef4444}
+        
+        .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:2000;align-items:center;justify-content:center}
+        .modal.active{display:flex}
+        .modal-content{background:#0f1433;border:1px solid rgba(124,92,255,0.25);border-radius:20px;padding:32px;max-width:500px;width:90%;max-height:80vh;overflow-y:auto}
+        .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
+        .modal-header h2{color:white;margin-bottom:0;font-size:1.2rem}
+        .close-modal{color:#8892b0;font-size:1.3rem;cursor:pointer}
+        .close-modal:hover{color:#ef4444}
+        .form-group{margin-bottom:20px}
+        .form-group label{display:block;color:#cbd5e0;margin-bottom:6px;font-weight:500;font-size:0.85rem}
+        .form-group input,.form-group select{width:100%;padding:11px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;color:white;font-size:0.9rem}
+        .form-group input:focus,.form-group select:focus{outline:none;border-color:#7c5cff}
+        .form-group select option{background:#0f1433;color:white}
+        
+        .empty-state{text-align:center;padding:40px 20px;color:#a0aec0}
+        .empty-state i{font-size:3rem;color:#7c5cff;margin-bottom:14px;opacity:0.4}
+        .empty-state p{font-size:0.95rem;margin-bottom:4px;color:#cbd5e0}
+        
+        .copyright{text-align:center;margin-top:32px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.04);color:#8892b0;font-size:0.8rem}
+        h2{color:white;margin-bottom:18px;font-size:1.3rem;font-weight:600}
+    </style>
+</head>
+<body>
+    <!-- TELA DE LOGIN -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-box">
+            <div class="login-logo">
+                <i class="fas fa-book-open"></i>
+                <h1>Aurora<span>.</span></h1>
+                <p>Gestão de Biblioteca</p>
+                <div class="library-badge"><i class="fas fa-building" style="margin-right:6px"></i>ÁREA DO CLIENTE</div>
+            </div>
+            <form id="loginForm">
+                <div class="input-group">
+                    <label>ID da Biblioteca</label>
+                    <div class="input-field"><i class="fas fa-key"></i><input type="text" id="libraryId" placeholder="Ex: BIB001" required style="text-transform:uppercase"></div>
+                </div>
+                <div class="input-group">
+                    <label>Senha de Acesso</label>
+                    <div class="input-field"><i class="fas fa-lock"></i><input type="password" id="libraryPassword" placeholder="••••••••" required></div>
+                </div>
+                <div class="error-message" id="loginError"></div>
+                <button type="submit" class="btn-login"><i class="fas fa-sign-in-alt"></i> Acessar Painel</button>
+            </form>
+            <div class="contact-support">
+                <p>Problemas com o acesso? <a href="#">Contate o Suporte</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE LIVRO -->
+    <div class="modal" id="bookModal">
+        <div class="modal-content">
+            <div class="modal-header"><h2 id="modalTitle">Novo Livro</h2><i class="fas fa-times close-modal" onclick="closeBookModal()"></i></div>
+            <form id="bookForm">
+                <input type="hidden" id="bookId">
+                <div class="form-group"><label>Título</label><input type="text" id="bookTitle" required></div>
+                <div class="form-group"><label>Autor</label><input type="text" id="bookAuthor" required></div>
+                <div class="form-group"><label>ISBN</label><input type="text" id="bookIsbn"></div>
+                <div class="form-group"><label>Editora</label><input type="text" id="bookPublisher"></div>
+                <div class="form-group"><label>Ano</label><input type="text" id="bookYear"></div>
+                <div class="form-group"><label>Categoria</label><select id="bookCategory" required><option value="Ficção">Ficção</option><option value="Não-Ficção">Não-Ficção</option><option value="Infantil">Infantil</option><option value="Didático">Didático</option><option value="Técnico">Técnico</option><option value="Outros">Outros</option></select></div>
+                <div class="form-group"><label>Quantidade</label><input type="number" id="bookQuantity" min="1" value="1" required></div>
+                <div class="form-group"><label>Localização</label><input type="text" id="bookLocation"></div>
+                <button type="submit" class="btn-primary" style="width:100%"><i class="fas fa-save"></i> Salvar Livro</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DE ALUNO -->
+    <div class="modal" id="studentModal">
+        <div class="modal-content">
+            <div class="modal-header"><h2 id="studentModalTitle">Novo Aluno</h2><i class="fas fa-times close-modal" onclick="closeStudentModal()"></i></div>
+            <form id="studentForm">
+                <input type="hidden" id="studentId">
+                <div class="form-group"><label>Nome Completo</label><input type="text" id="studentName" required></div>
+                <div class="form-group"><label>Matrícula / RA</label><input type="text" id="studentRa" required></div>
+                <div class="form-group"><label>E-mail</label><input type="email" id="studentEmail" required></div>
+                <div class="form-group"><label>Telefone</label><input type="tel" id="studentPhone"></div>
+                <div class="form-group"><label>Turma / Série</label><input type="text" id="studentClass"></div>
+                <button type="submit" class="btn-primary" style="width:100%"><i class="fas fa-save"></i> Salvar Aluno</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DE EMPRÉSTIMO -->
+    <div class="modal" id="loanModal">
+        <div class="modal-content">
+            <div class="modal-header"><h2>Novo Empréstimo</h2><i class="fas fa-times close-modal" onclick="closeLoanModal()"></i></div>
+            <form id="loanForm">
+                <div class="form-group"><label>Aluno</label><select id="loanStudent" required></select></div>
+                <div class="form-group"><label>Livro</label><select id="loanBook" required></select></div>
+                <div class="form-group"><label>Data de Devolução</label><input type="date" id="loanReturnDate" required></div>
+                <button type="submit" class="btn-primary" style="width:100%"><i class="fas fa-hand-holding"></i> Registrar Empréstimo</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DE MULTAS -->
+    <div class="modal" id="fineModal">
+        <div class="modal-content">
+            <div class="modal-header"><h2><i class="fas fa-coins"></i> Configurar Multas</h2><i class="fas fa-times close-modal" onclick="closeFineModal()"></i></div>
+            <form id="fineForm">
+                <div class="form-group"><label>Valor da multa por dia (R$)</label><input type="number" id="fineValue" min="0" step="0.01" value="2.00" required></div>
+                <div class="form-group"><label>Dias de tolerância</label><input type="number" id="fineGraceDays" min="0" value="1"></div>
+                <div class="form-group"><label>Valor máximo da multa (R$)</label><input type="number" id="fineMaxValue" min="0" step="0.01" value="50.00"></div>
+                <div class="form-group"><label style="display:flex;align-items:center;gap:10px"><input type="checkbox" id="fineBlockLoans" checked style="width:auto"> Bloquear empréstimos com multa pendente</label></div>
+                <button type="submit" class="btn-primary" style="width:100%"><i class="fas fa-save"></i> Salvar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- PAINEL PRINCIPAL -->
+    <div class="main-panel" id="mainPanel">
+        <div class="sidebar">
+            <div class="sidebar-logo"><h2>Aurora<span>.</span></h2><div class="library-info-sidebar" id="sidebarLibraryName">Biblioteca</div></div>
+            <div class="nav-menu">
+                <div class="nav-item active" data-page="dashboard"><i class="fas fa-chart-pie"></i> Dashboard</div>
+                <div class="nav-item" data-page="books"><i class="fas fa-book"></i> Acervo</div>
+                <div class="nav-item" data-page="students"><i class="fas fa-users"></i> Alunos</div>
+                <div class="nav-item" data-page="loans"><i class="fas fa-hand-holding"></i> Empréstimos</div>
+                <div class="nav-item" data-page="fines"><i class="fas fa-coins"></i> Multas</div>
+                <div class="nav-divider"></div>
+                <div class="nav-item" data-page="settings"><i class="fas fa-cog"></i> Configurações</div>
+            </div>
+            <div class="plan-info">
+                <h4 id="planNameDisplay">Plano Básico</h4>
+                <div class="plan-usage">
+                    <p><span id="booksUsage">0/500</span> livros</p>
+                    <div class="progress-bar"><div class="progress-fill" id="booksProgress" style="width:0%"></div></div>
+                    <p style="margin-top:10px"><span id="studentsUsage">0/200</span> alunos</p>
+                    <div class="progress-bar"><div class="progress-fill" id="studentsProgress" style="width:0%"></div></div>
+                </div>
+            </div>
+            <div style="padding:0 14px 20px;margin-top:auto">
+                <div class="logout-btn" onclick="logout()" style="width:100%;justify-content:center"><i class="fas fa-sign-out-alt"></i> Sair</div>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <div class="top-bar">
+                <div class="page-title"><h1 id="pageTitle">Dashboard</h1><p id="pageSubtitle">Visão geral da sua biblioteca</p></div>
+                <div class="user-profile">
+                    <div class="notification-icon" onclick="showNotifications()"><i class="far fa-bell"></i><span class="notification-badge" id="notificationCount">0</span></div>
+                    <div class="profile-info"><i class="fas fa-building"></i><span id="libraryNameDisplay">Biblioteca</span></div>
+                </div>
+            </div>
+
+            <!-- DASHBOARD -->
+            <div class="page active" id="dashboard">
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-header"><h3>Total de Livros</h3><div class="stat-icon"><i class="fas fa-book"></i></div></div><div class="stat-number" id="totalBooks">0</div></div>
+                    <div class="stat-card"><div class="stat-header"><h3>Alunos Cadastrados</h3><div class="stat-icon"><i class="fas fa-users"></i></div></div><div class="stat-number" id="totalStudents">0</div></div>
+                    <div class="stat-card"><div class="stat-header"><h3>Livros Emprestados</h3><div class="stat-icon"><i class="fas fa-hand-holding"></i></div></div><div class="stat-number" id="activeLoans">0</div></div>
+                    <div class="stat-card"><div class="stat-header"><h3>Multas Pendentes</h3><div class="stat-icon"><i class="fas fa-coins"></i></div></div><div class="stat-number" id="pendingFines">R$ 0</div></div>
+                </div>
+                <h2>Empréstimos Recentes</h2>
+                <div class="table-container">
+                    <div class="table-header" style="grid-template-columns:2fr 2fr 1.2fr 1.2fr 1fr"><div>Livro</div><div>Aluno</div><div>Empréstimo</div><div>Devolução</div><div>Status</div></div>
+                    <div id="recentLoansList"></div>
+                </div>
+            </div>
+
+            <!-- ACERVO -->
+            <div class="page" id="books">
+                <div class="action-buttons"><button class="btn-primary" onclick="openBookModal()"><i class="fas fa-plus-circle"></i> Novo Livro</button></div>
+                <div class="table-container">
+                    <div class="table-header" style="grid-template-columns:2.5fr 1.5fr 1fr 0.8fr 0.8fr 1fr 100px"><div>Título / Autor</div><div>ISBN</div><div>Categoria</div><div>Qtd</div><div>Disp</div><div>Local</div><div>Ações</div></div>
+                    <div id="booksList"></div>
+                </div>
+            </div>
+
+            <!-- ALUNOS -->
+            <div class="page" id="students">
+                <div class="action-buttons"><button class="btn-primary" onclick="openStudentModal()"><i class="fas fa-plus-circle"></i> Novo Aluno</button></div>
+                <div class="table-container">
+                    <div class="table-header" style="grid-template-columns:2fr 1fr 1.5fr 0.8fr 0.8fr 100px"><div>Nome / RA</div><div>Turma</div><div>Contato</div><div>Empr</div><div>Multas</div><div>Ações</div></div>
+                    <div id="studentsList"></div>
+                </div>
+            </div>
+
+            <!-- EMPRÉSTIMOS -->
+            <div class="page" id="loans">
+                <div class="action-buttons"><button class="btn-primary" onclick="openLoanModal()"><i class="fas fa-plus-circle"></i> Novo Empréstimo</button></div>
+                <div class="table-container">
+                    <div class="table-header" style="grid-template-columns:1.8fr 1.8fr 1fr 1fr 1fr 0.8fr 100px"><div>Livro</div><div>Aluno</div><div>Empréstimo</div><div>Devolução</div><div>Status</div><div>Multa</div><div>Ações</div></div>
+                    <div id="loansList"></div>
+                </div>
+            </div>
+
+            <!-- MULTAS -->
+            <div class="page" id="fines">
+                <div class="action-buttons"><button class="btn-primary" onclick="openFineModal()"><i class="fas fa-cog"></i> Configurar Multas</button></div>
+                <div class="table-container">
+                    <div class="table-header" style="grid-template-columns:1.8fr 1.8fr 1fr 1fr 1fr 100px"><div>Aluno</div><div>Livro</div><div>Dias</div><div>Valor</div><div>Status</div><div>Ações</div></div>
+                    <div id="finesList"></div>
+                </div>
+            </div>
+
+            <!-- CONFIGURAÇÕES -->
+            <div class="page" id="settings">
+                <h2>Configurações</h2>
+                <div style="max-width:460px">
+                    <div class="form-group"><label>Dias de empréstimo padrão</label><input type="number" id="settingsDefaultLoanDays" min="1" value="7"></div>
+                    <div class="form-group"><label>Limite de livros por aluno</label><input type="number" id="settingsMaxBooksPerStudent" min="1" value="3"></div>
+                    <button class="btn-primary" onclick="saveLibrarySettings()"><i class="fas fa-save"></i> Salvar</button>
+                </div>
+            </div>
+
+            <div class="copyright"><p>© 2026 Aurora • Gestão de Biblioteca v1.0</p></div>
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURAÇÃO SUPABASE
+        const SUPABASE_URL = 'https://wrkhdeodjamdhmdsapnr.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indya2hkZW9kamFtZGhtZHNhcG5yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4MDg1MDgsImV4cCI6MjA5MjM4NDUwOH0.rxvTkwboBwxv_RPQp8X2RyW_3-izoecy5x2Y7yzXQWU';
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        let currentLibrary = null;
+        let books = [];
+        let students = [];
+        let loans = [];
+        let fineSettings = { value: 2.00, graceDays: 1, maxValue: 50.00, blockLoans: true };
+        let librarySettings = { defaultLoanDays: 7, maxBooksPerStudent: 3 };
+        let plans = {};
+
+        // LOGIN
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const accessId = document.getElementById('libraryId').value.toUpperCase().trim();
+            const password = document.getElementById('libraryPassword').value;
+            
+            const { data, error } = await supabaseClient.from('libraries').select('*').eq('access_id', accessId).eq('password', password).single();
+            
+            if (data && data.status === 'Ativo') {
+                currentLibrary = data;
+                await loadPlans();
+                await loadLibraryData();
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('mainPanel').classList.add('active');
+                initializePanel();
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+                document.getElementById('loginError').textContent = 'ID ou senha incorretos, ou biblioteca inativa';
+            }
+        });
+
+        function logout() {
+            currentLibrary = null;
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('mainPanel').classList.remove('active');
+            document.getElementById('libraryPassword').value = '';
+        }
+
+        async function loadPlans() {
+            const { data } = await supabaseClient.from('plans').select('*');
+            if (data) data.forEach(p => { plans[p.name] = p; });
+        }
+
+        async function loadLibraryData() {
+            const libId = currentLibrary.id;
+            const { data: b } = await supabaseClient.from('books').select('*').eq('library_id', libId);
+            books = b || [];
+            const { data: s } = await supabaseClient.from('students').select('*').eq('library_id', libId);
+            students = s || [];
+            const { data: l } = await supabaseClient.from('loans').select('*').eq('library_id', libId);
+            loans = l || [];
+            const { data: f } = await supabaseClient.from('library_settings').select('*').eq('library_id', libId).single();
+            if (f) { fineSettings = f.fine_settings || fineSettings; librarySettings = f.loan_settings || librarySettings; }
+        }
+
+        function initializePanel() {
+            document.getElementById('sidebarLibraryName').textContent = currentLibrary.name;
+            document.getElementById('libraryNameDisplay').textContent = currentLibrary.name;
+            document.getElementById('planNameDisplay').textContent = `Plano ${currentLibrary.plan}`;
+            renderAll();
+            updateAllStats();
+        }
+
+        // NAVEGAÇÃO
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                this.classList.add('active');
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.getElementById(this.dataset.page).classList.add('active');
+                const titles = { dashboard: 'Dashboard', books: 'Acervo', students: 'Alunos', loans: 'Empréstimos', fines: 'Multas', settings: 'Configurações' };
+                document.getElementById('pageTitle').textContent = titles[this.dataset.page];
+                if (this.dataset.page === 'fines') renderFines();
+                if (this.dataset.page === 'settings') loadSettings();
+            });
+        });
+
+        // LIVROS
+        function openBookModal(id = null) {
+            if (id) {
+                const b = books.find(x => x.id === id);
+                document.getElementById('modalTitle').textContent = 'Editar Livro';
+                document.getElementById('bookId').value = b.id;
+                document.getElementById('bookTitle').value = b.title;
+                document.getElementById('bookAuthor').value = b.author;
+                document.getElementById('bookIsbn').value = b.isbn || '';
+                document.getElementById('bookPublisher').value = b.publisher || '';
+                document.getElementById('bookYear').value = b.year || '';
+                document.getElementById('bookCategory').value = b.category;
+                document.getElementById('bookQuantity').value = b.quantity;
+                document.getElementById('bookLocation').value = b.location || '';
+            } else {
+                document.getElementById('modalTitle').textContent = 'Novo Livro';
+                document.getElementById('bookForm').reset();
+                document.getElementById('bookId').value = '';
+            }
+            document.getElementById('bookModal').classList.add('active');
+        }
+        function closeBookModal() { document.getElementById('bookModal').classList.remove('active'); }
+        document.getElementById('bookForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('bookId').value || String(Date.now());
+            const qty = parseInt(document.getElementById('bookQuantity').value);
+            const book = { id, library_id: currentLibrary.id, title: document.getElementById('bookTitle').value, author: document.getElementById('bookAuthor').value, isbn: document.getElementById('bookIsbn').value, publisher: document.getElementById('bookPublisher').value, year: document.getElementById('bookYear').value, category: document.getElementById('bookCategory').value, quantity: qty, available: qty, location: document.getElementById('bookLocation').value };
+            const idx = books.findIndex(b => b.id === id);
+            if (idx >= 0) { book.available = books[idx].available + (qty - books[idx].quantity); }
+            await supabaseClient.from('books').upsert(book);
+            await loadLibraryData();
+            closeBookModal();
+            renderBooks();
+        });
+        async function deleteBook(id) { if (confirm('Excluir?')) { await supabaseClient.from('books').delete().eq('id', id); await loadLibraryData(); renderBooks(); } }
+        function renderBooks() {
+            const c = document.getElementById('booksList');
+            if (!books.length) { c.innerHTML = '<div class="empty-state"><i class="fas fa-book"></i><p>Nenhum livro</p></div>'; return; }
+            c.innerHTML = books.map(b => `<div class="table-row" style="grid-template-columns:2.5fr 1.5fr 1fr 0.8fr 0.8fr 1fr 100px"><div><strong>${b.title}</strong><br><small>${b.author}</small></div><div>${b.isbn||'-'}</div><div>${b.category}</div><div>${b.quantity}</div><div><span class="status-badge ${b.available>0?'status-available':'status-loaned'}">${b.available}</span></div><div>${b.location||'-'}</div><div><i class="fas fa-edit action-icon" onclick="openBookModal('${b.id}')"></i><i class="fas fa-trash action-icon delete" onclick="deleteBook('${b.id}')"></i></div></div>`).join('');
+        }
+
+        // ALUNOS
+        function openStudentModal(id = null) {
+            if (id) {
+                const s = students.find(x => x.id === id);
+                document.getElementById('studentModalTitle').textContent = 'Editar Aluno';
+                document.getElementById('studentId').value = s.id;
+                document.getElementById('studentName').value = s.name;
+                document.getElementById('studentRa').value = s.ra;
+                document.getElementById('studentEmail').value = s.email;
+                document.getElementById('studentPhone').value = s.phone || '';
+                document.getElementById('studentClass').value = s.class || '';
+            } else {
+                document.getElementById('studentModalTitle').textContent = 'Novo Aluno';
+                document.getElementById('studentForm').reset();
+                document.getElementById('studentId').value = '';
+            }
+            document.getElementById('studentModal').classList.add('active');
+        }
+        function closeStudentModal() { document.getElementById('studentModal').classList.remove('active'); }
+        document.getElementById('studentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('studentId').value || String(Date.now());
+            const student = { id, library_id: currentLibrary.id, name: document.getElementById('studentName').value, ra: document.getElementById('studentRa').value, email: document.getElementById('studentEmail').value, phone: document.getElementById('studentPhone').value, class: document.getElementById('studentClass').value, loans_count: 0, fines: 0 };
+            const idx = students.findIndex(s => s.id === id);
+            if (idx >= 0) { student.loans_count = students[idx].loans_count; student.fines = students[idx].fines; }
+            await supabaseClient.from('students').upsert(student);
+            await loadLibraryData();
+            closeStudentModal();
+            renderStudents();
+        });
+        async function deleteStudent(id) { if (confirm('Excluir?')) { await supabaseClient.from('students').delete().eq('id', id); await loadLibraryData(); renderStudents(); } }
+        function renderStudents() {
+            const c = document.getElementById('studentsList');
+            if (!students.length) { c.innerHTML = '<div class="empty-state"><i class="fas fa-users"></i><p>Nenhum aluno</p></div>'; return; }
+            c.innerHTML = students.map(s => `<div class="table-row" style="grid-template-columns:2fr 1fr 1.5fr 0.8fr 0.8fr 100px"><div><strong>${s.name}</strong><br><small>RA: ${s.ra}</small></div><div>${s.class||'-'}</div><div>${s.email}<br><small>${s.phone||''}</small></div><div>${s.loans_count||0}</div><div style="color:${s.fines>0?'#ef4444':'#34d399'}">R$ ${(s.fines||0).toFixed(2)}</div><div><i class="fas fa-edit action-icon" onclick="openStudentModal('${s.id}')"></i><i class="fas fa-trash action-icon delete" onclick="deleteStudent('${s.id}')"></i></div></div>`).join('');
+        }
+
+        // EMPRÉSTIMOS
+        function openLoanModal() {
+            const studentSelect = document.getElementById('loanStudent');
+            const bookSelect = document.getElementById('loanBook');
+            const availStudents = students.filter(s => (fineSettings.blockLoans ? s.fines === 0 : true) && s.loans_count < librarySettings.maxBooksPerStudent);
+            studentSelect.innerHTML = availStudents.map(s => `<option value="${s.id}">${s.name} (RA: ${s.ra})</option>`).join('');
+            const availBooks = books.filter(b => b.available > 0);
+            bookSelect.innerHTML = availBooks.map(b => `<option value="${b.id}">${b.title} (${b.available} disp)</option>`).join('');
+            const d = new Date(); d.setDate(d.getDate() + librarySettings.defaultLoanDays);
+            document.getElementById('loanReturnDate').value = d.toISOString().split('T')[0];
+            document.getElementById('loanModal').classList.add('active');
+        }
+        function closeLoanModal() { document.getElementById('loanModal').classList.remove('active'); }
+        document.getElementById('loanForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const studentId = document.getElementById('loanStudent').value;
+            const bookId = document.getElementById('loanBook').value;
+            if (!studentId || !bookId) return;
+            const student = students.find(s => s.id === studentId);
+            const book = books.find(b => b.id === bookId);
+            if (book.available > 0) {
+                const loan = { id: String(Date.now()), library_id: currentLibrary.id, book_id: bookId, book_title: book.title, student_id: studentId, student_name: student.name, loan_date: new Date().toLocaleDateString('pt-BR'), return_date: new Date(document.getElementById('loanReturnDate').value + 'T00:00:00').toLocaleDateString('pt-BR'), status: 'Emprestado', fine: 0 };
+                await supabaseClient.from('loans').insert(loan);
+                book.available--; student.loans_count++;
+                await supabaseClient.from('books').update({ available: book.available }).eq('id', bookId);
+                await supabaseClient.from('students').update({ loans_count: student.loans_count }).eq('id', studentId);
+                await loadLibraryData();
+                closeLoanModal();
+                renderLoans();
+                alert('✅ Empréstimo registrado!');
+            }
+        });
+        async function returnBook(loanId) {
+            const loan = loans.find(l => l.id === loanId);
+            if (loan && loan.status === 'Emprestado') {
+                const book = books.find(b => b.id === loan.book_id);
+                const student = students.find(s => s.id === loan.student_id);
+                const parts = loan.return_date.split('/'); const retDate = new Date(parts[2], parts[1]-1, parts[0]);
+                const today = new Date(); today.setHours(0,0,0,0);
+                const days = Math.max(0, Math.ceil((today - retDate) / (1000*60*60*24)));
+                let fine = 0;
+                if (days > fineSettings.graceDays) { fine = (days - fineSettings.graceDays) * fineSettings.value; if (fineSettings.maxValue > 0) fine = Math.min(fine, fineSettings.maxValue); }
+                loan.status = 'Devolvido'; loan.actual_return_date = new Date().toLocaleDateString('pt-BR'); loan.fine = fine;
+                book.available++; student.loans_count--; if (fine > 0) student.fines = (student.fines || 0) + fine;
+                await supabaseClient.from('loans').update({ status: loan.status, actual_return_date: loan.actual_return_date, fine: fine }).eq('id', loanId);
+                await supabaseClient.from('books').update({ available: book.available }).eq('id', book.id);
+                await supabaseClient.from('students').update({ loans_count: student.loans_count, fines: student.fines }).eq('id', student.id);
+                await loadLibraryData();
+                renderLoans();
+                alert(fine > 0 ? `Devolvido! Multa: R$ ${fine.toFixed(2)}` : '✅ Devolvido!');
+            }
+        }
+        function renderLoans() {
+            const c = document.getElementById('loansList');
+            if (!loans.length) { c.innerHTML = '<div class="empty-state"><i class="fas fa-hand-holding"></i><p>Nenhum empréstimo</p></div>'; return; }
+            c.innerHTML = loans.map(l => { const parts = l.return_date.split('/'); const retDate = new Date(parts[2], parts[1]-1, parts[0]); const today = new Date(); today.setHours(0,0,0,0); const overdue = l.status === 'Emprestado' && today > retDate; const cls = l.status === 'Emprestado' ? (overdue ? 'status-overdue' : 'status-loaned') : 'status-available'; const txt = l.status === 'Emprestado' ? (overdue ? 'Atrasado' : 'Emprestado') : 'Devolvido';
+                return `<div class="table-row" style="grid-template-columns:1.8fr 1.8fr 1fr 1fr 1fr 0.8fr 100px"><div>${l.book_title}</div><div>${l.student_name}</div><div>${l.loan_date}</div><div>${l.return_date}</div><div><span class="status-badge ${cls}">${txt}</span></div><div>${l.fine>0?`R$ ${l.fine.toFixed(2)}`:'-'}</div><div>${l.status==='Emprestado'?`<i class="fas fa-check-circle action-icon" onclick="returnBook('${l.id}')"></i>`:`<i class="fas fa-eye action-icon" onclick="alert('Devolvido em: ${l.actual_return_date}')"></i>`}</div></div>`; }).join('');
+        }
+
+        // MULTAS
+        function openFineModal() { document.getElementById('fineValue').value = fineSettings.value; document.getElementById('fineGraceDays').value = fineSettings.graceDays; document.getElementById('fineMaxValue').value = fineSettings.maxValue; document.getElementById('fineBlockLoans').checked = fineSettings.blockLoans; document.getElementById('fineModal').classList.add('active'); }
+        function closeFineModal() { document.getElementById('fineModal').classList.remove('active'); }
+        document.getElementById('fineForm').addEventListener('submit', async (e) => { e.preventDefault(); fineSettings = { value: parseFloat(document.getElementById('fineValue').value), graceDays: parseInt(document.getElementById('fineGraceDays').value), maxValue: parseFloat(document.getElementById('fineMaxValue').value), blockLoans: document.getElementById('fineBlockLoans').checked }; await supabaseClient.from('library_settings').upsert({ library_id: currentLibrary.id, fine_settings: fineSettings, loan_settings: librarySettings }); closeFineModal(); alert('✅ Salvo!'); });
+        function renderFines() { document.getElementById('finesList').innerHTML = '<div class="empty-state"><i class="fas fa-coins"></i><p>Em breve</p></div>'; }
+
+        // CONFIGURAÇÕES
+        function loadSettings() { document.getElementById('settingsDefaultLoanDays').value = librarySettings.defaultLoanDays; document.getElementById('settingsMaxBooksPerStudent').value = librarySettings.maxBooksPerStudent; }
+        async function saveLibrarySettings() { librarySettings = { defaultLoanDays: parseInt(document.getElementById('settingsDefaultLoanDays').value), maxBooksPerStudent: parseInt(document.getElementById('settingsMaxBooksPerStudent').value) }; await supabaseClient.from('library_settings').upsert({ library_id: currentLibrary.id, fine_settings: fineSettings, loan_settings: librarySettings }); alert('✅ Salvo!'); }
+
+        // UTILITÁRIAS
+        function updateAllStats() {
+            document.getElementById('totalBooks').textContent = books.reduce((s,b) => s + b.quantity, 0);
+            document.getElementById('totalStudents').textContent = students.length;
+            document.getElementById('activeLoans').textContent = loans.filter(l => l.status === 'Emprestado').length;
+            document.getElementById('pendingFines').textContent = `R$ ${students.reduce((s,st) => s + (st.fines||0), 0).toFixed(2)}`;
+            const plan = plans[currentLibrary.plan] || { users_limit: '200', books_limit: '500' };
+            document.getElementById('booksUsage').textContent = `${books.reduce((s,b) => s + b.quantity, 0)}/${plan.books_limit}`;
+            document.getElementById('studentsUsage').textContent = `${students.length}/${plan.users_limit}`;
+        }
+        function showNotifications() { alert('📢 Sistema funcionando!'); }
+        function renderAll() { renderBooks(); renderStudents(); renderLoans(); updateAllStats(); }
+
+        // INICIALIZAR
+        loadPlans();
+    </script>
+</body>
+</html>
