@@ -30,8 +30,6 @@
         .contact-support{text-align:center;margin-top:24px;color:#8892b0;font-size:0.75rem}
         .contact-support a{color:#a78bfa;text-decoration:none}
         .creator-info{text-align:center;margin-top:20px;color:#8892b0;font-size:0.7rem}
-        .remember-me{display:flex;align-items:center;gap:8px;margin-bottom:16px;color:#cbd5e0;font-size:0.85rem}
-        .remember-me input{width:18px;height:18px;cursor:pointer}
         
         .main-panel{display:none;height:100vh;background:#0a0e27;overflow:hidden}
         .main-panel.active{display:flex}
@@ -137,7 +135,6 @@
             <form id="loginForm">
                 <div class="input-group"><label>ID da Biblioteca</label><div class="input-field"><i class="fas fa-key"></i><input type="text" id="libraryId" placeholder="Ex: BIB001" required style="text-transform:uppercase"></div></div>
                 <div class="input-group"><label>Senha de Acesso</label><div class="input-field"><i class="fas fa-lock"></i><input type="password" id="libraryPassword" placeholder="••••••••" required></div></div>
-                <div class="remember-me"><input type="checkbox" id="rememberMe"> <label for="rememberMe" style="cursor:pointer">Mantenha-me conectado</label></div>
                 <div class="error-message" id="loginError"></div>
                 <button type="submit" class="btn-login"><i class="fas fa-sign-in-alt"></i> Acessar Painel</button>
             </form>
@@ -347,8 +344,6 @@
             e.preventDefault();
             const accessId = document.getElementById('libraryId').value.toUpperCase().trim();
             const password = document.getElementById('libraryPassword').value;
-            const rememberMe = document.getElementById('rememberMe').checked;
-            localStorage.setItem('aurora_remember_me', rememberMe);
             
             const { data, error } = await supabaseClient.from('libraries').select('*').eq('access_id', accessId).eq('password', password).single();
             if (data && data.status === 'Ativo') {
@@ -385,7 +380,6 @@
             document.getElementById('sidebarLibraryTitle').textContent = currentLibrary.name;
             document.getElementById('libraryNameDisplay').textContent = currentLibrary.name;
             document.getElementById('planNameDisplay').textContent = `Plano ${currentLibrary.plan}`;
-            document.getElementById('rememberMe').checked = localStorage.getItem('aurora_remember_me') === 'true';
             renderAll(); updateAllStats();
         }
 
