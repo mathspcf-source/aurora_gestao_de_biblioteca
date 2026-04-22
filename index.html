@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Aurora • Painel do Dono</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+        body{background:#0a0e27;height:100vh;overflow:hidden}
+        
+        .login-screen{position:fixed;top:0;left:0;width:100%;height:100vh;background:linear-gradient(135deg,#0a0e27 0%,#1a1f4e 100%);display:flex;align-items:center;justify-content:center;z-index:1000}
+        .login-screen.hidden{display:none}
+        .login-box{background:rgba(255,255,255,0.03);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:40px 36px;width:100%;max-width:400px;box-shadow:0 25px 50px rgba(0,0,0,0.4)}
+        .login-logo{text-align:center;margin-bottom:32px}
+        .login-logo i{font-size:2.8rem;color:white;filter:drop-shadow(0 0 20px rgba(124,92,255,0.5))}
+        .login-logo h1{font-size:2rem;font-weight:700;color:white;margin-top:10px}
+        .login-logo h1 span{background:linear-gradient(135deg,#7c5cff,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .login-logo p{color:#a0aec0;margin-top:4px;font-size:0.9rem}
+        .owner-badge{background:linear-gradient(135deg,#7c5cff,#5b3cc4);padding:5px 16px;border-radius:30px;font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:white;display:inline-block;margin-top:12px}
+        .input-group{margin-bottom:20px}
+        .input-group label{display:block;color:#cbd5e0;margin-bottom:6px;font-weight:500;font-size:0.85rem}
+        .input-field{position:relative}
+        .input-field i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:white;font-size:1rem}
+        .input-field input{width:100%;padding:12px 12px 12px 42px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;color:white;font-size:0.9rem}
+        .input-field input:focus{outline:none;border-color:#7c5cff;background:rgba(124,92,255,0.08)}
+        .btn-login{width:100%;padding:13px;background:linear-gradient(135deg,#7c5cff,#5b3cc4);border:none;border-radius:12px;color:white;font-weight:600;font-size:0.95rem;cursor:pointer;margin-top:8px}
+        .btn-login:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(124,92,255,0.4)}
+        .error-message{color:#ef4444;text-align:center;margin-top:12px;font-size:0.8rem;display:none}
+        .creator-info{text-align:center;margin-top:24px;color:#8892b0;font-size:0.75rem}
+        
+        .main-panel{display:none;height:100vh;background:#0a0e27;overflow:hidden}
+        .main-panel.active{display:flex}
+        .sidebar{width:260px;background:linear-gradient(180deg,#0f1433 0%,#0a0e27 100%);border-right:1px solid rgba(255,255,255,0.04);display:flex;flex-direction:column;padding:24px 0;height:100vh;overflow-y:auto}
+        .sidebar-logo{padding:0 18px 24px 24px;border-bottom:1px solid rgba(124,92,255,0.15);margin-bottom:24px}
+        .sidebar-logo h2{font-size:1.6rem;font-weight:700;color:white}
+        .sidebar-logo h2 span{background:linear-gradient(135deg,#7c5cff,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+        .version-badge{font-size:0.65rem;color:#a78bfa;margin-top:6px}
+        .nav-menu{flex:1;padding:0 14px}
+        .nav-item{display:flex;align-items:center;gap:12px;padding:11px 16px;margin:2px 0;border-radius:12px;color:#a0aec0;font-weight:500;font-size:0.9rem;cursor:pointer;transition:all 0.2s}
+        .nav-item i{width:22px;font-size:1.1rem}
+        .nav-item:hover{background:rgba(124,92,255,0.1);color:white}
+        .nav-item.active{background:linear-gradient(135deg,#7c5cff,#5b3cc4);color:white}
+        .nav-divider{height:1px;background:rgba(255,255,255,0.04);margin:16px 14px}
+        .owner-footer{padding:16px 20px;border-top:1px solid rgba(255,255,255,0.04);margin-top:auto;font-size:0.75rem;color:#8892b0}
+        .owner-footer strong{color:#a78bfa}
+        .whatsapp-link{display:flex;align-items:center;gap:6px;color:#25d366;text-decoration:none;margin-top:6px;font-size:0.75rem}
+        
+        .content-area{flex:1;padding:24px 32px;overflow-y:auto;height:100vh}
+        .top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
+        .page-title h1{font-size:1.8rem;font-weight:700;color:white;margin-bottom:2px}
+        .page-title p{color:#a0aec0;font-size:0.9rem}
+        .user-profile{display:flex;align-items:center;gap:16px}
+        .notification-icon{background:rgba(255,255,255,0.04);width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-size:1.2rem;cursor:pointer;border:1px solid rgba(255,255,255,0.06);position:relative}
+        .notification-badge{position:absolute;top:-3px;right:-3px;background:#ef4444;color:white;font-size:0.6rem;font-weight:bold;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+        .profile-info{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.03);padding:6px 18px 6px 12px;border-radius:40px;border:1px solid rgba(255,255,255,0.06)}
+        .profile-info i{color:white;font-size:1.3rem}
+        .profile-info span{color:white;font-weight:500;font-size:0.9rem}
+        .logout-btn{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:#f87171;padding:8px 18px;border-radius:12px;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:0.85rem}
+        .logout-btn:hover{background:rgba(239,68,68,0.15)}
+        
+        .page{display:none}
+        .page.active{display:block}
+        
+        .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:32px}
+        .stat-card{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.04);border-radius:18px;padding:20px}
+        .stat-card:hover{border-color:rgba(124,92,255,0.2)}
+        .stat-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+        .stat-header h3{color:#a0aec0;font-size:0.85rem;font-weight:500}
+        .stat-icon{width:42px;height:42px;background:rgba(124,92,255,0.1);border-radius:12px;display:flex;align-items:center;justify-content:center;color:white;font-size:1.3rem}
+        .stat-number{font-size:2.2rem;font-weight:700;color:white;margin-bottom:4px}
+        .stat-trend{color:#34d399;font-size:0.8rem}
+        
+        .table-container{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);border-radius:16px;overflow:hidden;margin-top:20px}
+        .table-header{display:grid;padding:14px 20px;background:rgba(124,92,255,0.08);color:#cbd5e0;font-weight:600;font-size:0.75rem;text-transform:uppercase}
+        .table-row{display:grid;padding:16px 20px;align-items:center;border-bottom:1px solid rgba(255,255,255,0.03);color:white;font-size:0.9rem}
+        .table-row:last-child{border-bottom:none}
+        .table-row:hover{background:rgba(124,92,255,0.04)}
+        
+        .btn-primary{background:linear-gradient(135deg,#7c5cff,#5b3cc4);color:white;border:none;padding:11px 22px;border-radius:12px;font-weight:500;font-size:0.9rem;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:0 6px 14px rgba(124,92,255,0.25)}
+        .btn-primary:hover{transform:translateY(-1px)}
+        .btn-secondary{background:rgba(255,255,255,0.04);color:white;border:1px solid rgba(255,255,255,0.08);padding:10px 20px;border-radius:12px;font-weight:500;font-size:0.9rem;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+        .btn-secondary:hover{background:rgba(255,255,255,0.08)}
+        .btn-danger{background:rgba(239,68,68,0.1);color:#f87171;border:1px solid rgba(239,68,68,0.2);padding:10px 20px;border-radius:12px;font-weight:500;font-size:0.9rem;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+        .btn-danger:hover{background:rgba(239,68,68,0.15)}
+        .action-buttons{display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+        
+        .status-badge{padding:4px 10px;border-radius:20px;font-size:0.7rem;font-weight:600;display:inline-block}
+        .status-active{background:rgba(16,185,129,0.15);color:#34d399}
+        .status-pending{background:rgba(245,158,11,0.15);color:#fbbf24}
+        .status-blocked{background:rgba(239,68,68,0.15);color:#f87171}
+        .action-icon{color:white;cursor:pointer;margin:0 6px;font-size:0.95rem}
+        .action-icon:hover{color:#a78bfa}
+        .action-icon.delete{color:#f87171}
+        .action-icon.delete:hover{color:#ef4444}
+        .id-badge{background:rgba(124,92,255,0.15);padding:5px 12px;border-radius:20px;font-family:monospace;font-size:0.8rem;color:#a78bfa;margin-left:12px;cursor:pointer;display:inline-block}
+        .id-badge i{margin-right:6px;color:#a78bfa}
+        .id-badge:hover{background:rgba(124,92,255,0.25)}
+        .library-info-row{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+        
+        .plan-card{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.04);border-radius:18px;padding:24px;cursor:pointer}
+        .plan-card:hover{border-color:rgba(124,92,255,0.25);transform:translateY(-2px)}
+        
+        .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:2000;align-items:center;justify-content:center}
+        .modal.active{display:flex}
+        .modal-content{background:#0f1433;border:1px solid rgba(124,92,255,0.25);border-radius:20px;padding:32px;max-width:500px;width:90%;max-height:80vh;overflow-y:auto}
+        .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
+        .modal-header h2{color:white;margin-bottom:0;font-size:1.2rem}
+        .close-modal{color:#8892b0;font-size:1.3rem;cursor:pointer}
+        .close-modal:hover{color:#ef4444}
+        .form-group{margin-bottom:20px}
+        .form-group label{display:block;color:#cbd5e0;margin-bottom:6px;font-weight:500;font-size:0.85rem}
+        .form-group input,.form-group select{width:100%;padding:11px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;color:white;font-size:0.9rem}
+        .form-group input:focus,.form-group select:focus{outline:none;border-color:#7c5cff}
+        .form-group select option{background:#0f1433;color:white}
+        .form-group small{display:block;color:#8892b0;margin-top:5px;font-size:0.75rem}
+        .success-message{background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);color:#34d399;padding:12px;border-radius:12px;margin-bottom:20px;display:none}
+        
+        .backup-card{background:linear-gradient(135deg,rgba(124,92,255,0.06),rgba(91,60,196,0.06));border:1px solid rgba(124,92,255,0.15);border-radius:18px;padding:28px;margin-bottom:24px}
+        
+        .empty-state{text-align:center;padding:40px 20px;color:#a0aec0}
+        .empty-state i{font-size:3rem;color:#7c5cff;margin-bottom:14px;opacity:0.4}
+        .empty-state p{font-size:0.95rem;margin-bottom:4px;color:#cbd5e0}
+        
+        .copyright{text-align:center;margin-top:32px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.04);color:#8892b0;font-size:0.8rem}
+        h2{color:white;margin-bottom:18px;font-size:1.3rem;font-weight:600}
+        h3{color:white;margin:32px 0 18px;font-size:1.1rem;font-weight:600}
+    </style>
+</head>
+<body>
+    <!-- TELA DE LOGIN -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-box">
+            <div class="login-logo">
+                <i class="fas fa-crown"></i>
+                <h1>Aurora<span>.</span></h1>
+                <p>Gestão de Biblioteca</p>
+                <div class="owner-badge"><i class="fas fa-shield-alt" style="margin-right:6px"></i>PAINEL DO DONO</div>
+            </div>
+            <form id="loginForm">
+                <div class="input-group">
+                    <label>E-mail do proprietário</label>
+                    <div class="input-field"><i class="fas fa-envelope"></i><input type="email" id="loginEmail" placeholder="seu@email.com" required></div>
+                </div>
+                <div class="input-group">
+                    <label>Senha de acesso</label>
+                    <div class="input-field"><i class="fas fa-lock"></i><input type="password" id="loginPassword" placeholder="••••••••" required></div>
+                </div>
+                <div class="error-message" id="loginError"></div>
+                <button type="submit" class="btn-login"><i class="fas fa-sign-in-alt"></i> Acessar Sistema</button>
+            </form>
+            <div class="creator-info">
+                <p>© 2026 Aurora v1.0 • <strong>Matheus Pacifico</strong></p>
+                <p><a href="https://wa.me/5579996458399" target="_blank" style="color:#a78bfa;text-decoration:none"><i class="fab fa-whatsapp"></i> (79) 99645-8399</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE BIBLIOTECA -->
+    <div class="modal" id="libraryModal">
+        <div class="modal-content">
+            <div class="modal-header"><h2 id="modalTitle">Nova Biblioteca</h2><i class="fas fa-times close-modal" onclick="closeLibraryModal()"></i></div>
+            <div class="success-message" id="successMessage"></div>
+            <form id="libraryForm">
+                <input type="hidden" id="libraryId">
+                <div class="form-group"><label>ID de Acesso</label><input type="text" id="libraryAccessId" placeholder="Ex: BIB001" required style="text-transform:uppercase"><small>Usado pelo cliente para login</small></div>
+                <div class="form-group"><label>Senha de Acesso</label><div style="display:flex;gap:10px"><input type="text" id="libraryPasswordField" placeholder="Senha" required style="flex:1"><button type="button" class="btn-secondary" onclick="generatePassword()" style="padding:11px 16px"><i class="fas fa-sync-alt"></i></button></div></div>
+                <div class="form-group"><label>Nome da Biblioteca</label><input type="text" id="libraryName" placeholder="Ex: Biblioteca Central" required></div>
+                <div class="form-group"><label>Cidade / Estado</label><input type="text" id="libraryLocation" placeholder="Ex: São Paulo, SP" required></div>
+                <div class="form-group"><label>E-mail do responsável</label><input type="email" id="libraryEmail" placeholder="contato@biblioteca.com" required></div>
+                <div class="form-group"><label>Plano</label><select id="libraryPlan" required></select></div>
+                <div class="form-group"><label>Status</label><select id="libraryStatus"><option value="Ativo">Ativo</option><option value="Pendente">Pendente</option><option value="Bloqueado">Bloqueado</option></select></div>
+                <button type="submit" class="btn-primary" style="width:100%"><i class="fas fa-save"></i> Salvar Biblioteca</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL DE PLANO -->
+    <div class="modal" id="planModal">
+        <div class="modal-content">
+            <div class="modal-header"><h2 id="planModalTitle">Editar Plano</h2><i class="fas fa-times close-modal" onclick="closePlanModal()"></i></div>
+            <form id="planForm">
+                <input type="hidden" id="planName">
+                <div class="form-group"><label>Valor Mensal (R$)</label><input type="number" id="planPrice" min="0" step="0.01" required></div>
+                <div class="form-group"><label>Limite de Usuários</label><input type="text" id="planUsers" placeholder="Ex: 200 ou Ilimitado" required></div>
+                <div class="form-group"><label>Limite de Livros</label><input type="text" id="planBooks" placeholder="Ex: 500 ou Ilimitado" required></div>
+                <div class="form-group"><label>Recursos (separados por vírgula)</label><input type="text" id="planFeatures" required></div>
+                <button type="submit" class="btn-primary" style="width:100%"><i class="fas fa-save"></i> Salvar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- PAINEL PRINCIPAL -->
+    <div class="main-panel" id="mainPanel">
+        <div class="sidebar">
+            <div class="sidebar-logo"><h2>Aurora<span>.</span></h2><div class="version-badge">v1.0 • Painel do Dono</div></div>
+            <div class="nav-menu">
+                <div class="nav-item active" data-page="dashboard"><i class="fas fa-chart-pie"></i> Dashboard</div>
+                <div class="nav-item" data-page="bibliotecas"><i class="fas fa-building"></i> Bibliotecas</div>
+                <div class="nav-item" data-page="planos"><i class="fas fa-crown"></i> Planos</div>
+                <div class="nav-divider"></div>
+                <div class="nav-item" data-page="backup"><i class="fas fa-database"></i> Backup</div>
+                <div class="nav-item" data-page="configuracoes"><i class="fas fa-cog"></i> Configurações</div>
+            </div>
+            <div class="owner-footer">
+                <p><strong>Matheus Pacifico</strong></p>
+                <a href="https://wa.me/5579996458399" class="whatsapp-link" target="_blank"><i class="fab fa-whatsapp"></i> (79) 99645-8399</a>
+                <p style="margin-top:8px">© 2026 Aurora v1.0</p>
+            </div>
+        </div>
+
+        <div class="content-area">
+            <div class="top-bar">
+                <div class="page-title"><h1 id="pageTitle">Dashboard</h1><p id="pageSubtitle">Visão geral do seu negócio</p></div>
+                <div class="user-profile">
+                    <div class="notification-icon" onclick="showNotifications()"><i class="far fa-bell"></i><span class="notification-badge" id="notificationCount">0</span></div>
+                    <div class="profile-info"><i class="fas fa-user-shield"></i><span id="userNameDisplay">Matheus</span></div>
+                    <div class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Sair</div>
+                </div>
+            </div>
+
+            <!-- DASHBOARD -->
+            <div class="page active" id="dashboard">
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-header"><h3>Total Bibliotecas</h3><div class="stat-icon"><i class="fas fa-building"></i></div></div><div class="stat-number" id="totalLibraries">0</div><div class="stat-trend"><i class="fas fa-arrow-up"></i> Atualizado</div></div>
+                    <div class="stat-card"><div class="stat-header"><h3>Receita Mensal</h3><div class="stat-icon"><i class="fas fa-dollar-sign"></i></div></div><div class="stat-number" id="monthlyRevenue">R$ 0</div><div class="stat-trend"><i class="fas fa-calculator"></i> Projeção</div></div>
+                    <div class="stat-card"><div class="stat-header"><h3>Planos Ativos</h3><div class="stat-icon"><i class="fas fa-crown"></i></div></div><div class="stat-number" id="activePlans">0</div><div class="stat-trend" id="occupancyRate">0% ocupação</div></div>
+                    <div class="stat-card"><div class="stat-header"><h3>Backups</h3><div class="stat-icon"><i class="fas fa-cloud-upload-alt"></i></div></div><div class="stat-number" id="totalBackups">0</div><div class="stat-trend" id="lastBackup">Nenhum</div></div>
+                </div>
+
+                <h2>Bibliotecas Recentes</h2>
+                <div class="table-container">
+                    <div class="table-header" style="grid-template-columns:2.5fr 1fr 1fr 1fr 100px"><div>Biblioteca / ID</div><div>Plano</div><div>Status</div><div>Cadastro</div><div>Ações</div></div>
+                    <div id="recentLibrariesList"></div>
+                </div>
+            </div>
+
+            <!-- BIBLIOTECAS -->
+            <div class="page" id="bibliotecas">
+                <div class="action-buttons">
+                    <button class="btn-primary" onclick="openLibraryModal()"><i class="fas fa-plus-circle"></i> Nova Biblioteca</button>
+                    <button class="btn-secondary" onclick="exportLibraries()"><i class="fas fa-download"></i> Exportar Lista</button>
+                </div>
+                <div class="table-container">
+                    <div class="table-header" style="grid-template-columns:2.5fr 1fr 1fr 1fr 120px"><div>Biblioteca / ID</div><div>Plano</div><div>Status</div><div>Vencimento</div><div>Ações</div></div>
+                    <div id="librariesList"></div>
+                </div>
+            </div>
+
+            <!-- PLANOS -->
+            <div class="page" id="planos">
+                <h2>Gerenciamento de Planos</h2>
+                <p style="color:#a0aec0;margin-bottom:24px">Clique em qualquer plano para editar valores, limites e recursos</p>
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px" id="plansContainer"></div>
+            </div>
+
+            <!-- BACKUP -->
+            <div class="page" id="backup">
+                <div class="backup-card">
+                    <h2 style="display:flex;align-items:center;gap:10px;margin-top:0"><i class="fas fa-database"></i> Gerenciamento de Backup</h2>
+                    <p style="color:#a0aec0;margin-bottom:24px">Faça backup completo do sistema ou restaure versões anteriores</p>
+                    <div class="action-buttons">
+                        <button class="btn-primary" onclick="createBackup()"><i class="fas fa-download"></i> Fazer Backup</button>
+                        <button class="btn-secondary" onclick="restoreBackup()"><i class="fas fa-upload"></i> Restaurar</button>
+                        <button class="btn-danger" onclick="clearBackupHistory()"><i class="fas fa-trash"></i> Limpar Histórico</button>
+                    </div>
+                    <h3>Histórico de Backups</h3>
+                    <div class="table-container">
+                        <div class="table-header" style="grid-template-columns:2fr 1fr 1fr 1fr 100px"><div>Data / Hora</div><div>Tamanho</div><div>Tipo</div><div>Status</div><div>Ações</div></div>
+                        <div id="backupHistoryList"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONFIGURAÇÕES -->
+            <div class="page" id="configuracoes">
+                <h2>Configurações da Conta</h2>
+                <div style="max-width:460px">
+                    <div class="success-message" id="settingsSuccessMessage" style="display:block;margin-bottom:24px"><i class="fas fa-info-circle"></i> Alterações aplicadas imediatamente</div>
+                    <div class="form-group"><label>Nome completo</label><input type="text" id="settingsName" value="Matheus Pacifico"></div>
+                    <div class="form-group"><label>E-mail de acesso</label><input type="email" id="settingsEmail" value="admin@aurora.com"></div>
+                    <div class="form-group"><label>WhatsApp</label><input type="tel" id="settingsPhone" value="(79) 99645-8399"></div>
+                    <div class="form-group"><label>Nova senha (opcional)</label><input type="password" id="settingsNewPassword" placeholder="••••••••"></div>
+                    <div class="form-group"><label>Confirmar senha</label><input type="password" id="settingsConfirmPassword" placeholder="••••••••"></div>
+                    <button class="btn-primary" onclick="saveSettings()"><i class="fas fa-save"></i> Salvar</button>
+                </div>
+            </div>
+
+            <div class="copyright">
+                <p>© 2026 Aurora • Gestão de Biblioteca v1.0</p>
+                <p style="margin-top:6px">Desenvolvido por Matheus Pacifico | (79) 99645-8399</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== CONFIGURAÇÃO SUPABASE =====
+        const SUPABASE_URL = 'https://wrkhdeodjamdhmdsapnr.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indya2hkZW9kamFtZGhtZHNhcG5yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4MDg1MDgsImV4cCI6MjA5MjM4NDUwOH0.rxvTkwboBwxv_RPQp8X2RyW_3-izoecy5x2Y7yzXQWU';
+        
+        // Inicializar cliente Supabase (UMA ÚNICA VEZ)
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        // Variáveis globais
+        let libraries = [];
+        let plans = {};
+        let backups = [];
+        let userSettings = { name: 'Matheus Pacifico', email: 'admin@aurora.com', phone: '(79) 99645-8399', password: '123456' };
+        let currentEditId = null;
+
+        // ===== FUNÇÕES AUXILIARES =====
+        function generatePassword() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let p = ''; 
+            for (let i = 0; i < 10; i++) p += chars.charAt(Math.floor(Math.random() * chars.length));
+            document.getElementById('libraryPasswordField').value = p;
+        }
+
+        function getStatusClass(status) {
+            if (status === 'Ativo') return 'status-active';
+            if (status === 'Pendente') return 'status-pending';
+            return 'status-blocked';
+        }
+
+        // ===== LOGIN =====
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            
+            const { data, error } = await supabaseClient
+                .from('owner_settings')
+                .select('*')
+                .eq('email', email)
+                .eq('password', password)
+                .single();
+            
+            if (data) {
+                userSettings = data;
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('mainPanel').classList.add('active');
+                document.getElementById('userNameDisplay').textContent = userSettings.name.split(' ')[0];
+                await loadAllData();
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+                document.getElementById('loginError').textContent = 'Email ou senha incorretos';
+            }
+        });
+
+        function logout() {
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('mainPanel').classList.remove('active');
+            document.getElementById('loginPassword').value = '';
+            document.getElementById('loginError').style.display = 'none';
+        }
+
+        // ===== CARREGAR DADOS =====
+        async function loadAllData() {
+            try {
+                // Carregar bibliotecas
+                const { data: libs } = await supabaseClient.from('libraries').select('*').order('created_at', { ascending: false });
+                libraries = libs || [];
+                
+                // Carregar planos
+                const { data: plns } = await supabaseClient.from('plans').select('*');
+                if (plns) {
+                    plans = {};
+                    plns.forEach(p => { plans[p.name] = p; });
+                }
+                
+                // Carregar backups
+                const { data: bcks } = await supabaseClient.from('backups').select('*').order('date', { ascending: false });
+                backups = bcks || [];
+                
+                renderAll();
+                updateAllStats();
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+            }
+        }
+
+        // ===== NAVEGAÇÃO =====
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                this.classList.add('active');
+                
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.getElementById(this.dataset.page).classList.add('active');
+                
+                const titles = {
+                    'dashboard': 'Dashboard', 'bibliotecas': 'Bibliotecas', 'planos': 'Planos',
+                    'backup': 'Backup', 'configuracoes': 'Configurações'
+                };
+                const subtitles = {
+                    'dashboard': 'Visão geral do seu negócio', 'bibliotecas': 'Gerencie as bibliotecas clientes',
+                    'planos': 'Configure planos e limites', 'backup': 'Backup e restauração', 'configuracoes': 'Configurações da sua conta'
+                };
+                
+                document.getElementById('pageTitle').textContent = titles[this.dataset.page];
+                document.getElementById('pageSubtitle').textContent = subtitles[this.dataset.page];
+                
+                if (this.dataset.page === 'planos') renderPlans();
+                if (this.dataset.page === 'backup') renderBackupHistory();
+                if (this.dataset.page === 'configuracoes') loadSettings();
+            });
+        });
+
+        // ===== RENDERIZAÇÃO =====
+        function renderAll() {
+            renderLibrariesList();
+            renderRecentLibraries();
+            renderPlans();
+            renderBackupHistory();
+        }
+
+        function renderLibrariesList() {
+            const container = document.getElementById('librariesList');
+            if (!libraries.length) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-building"></i><p>Nenhuma biblioteca</p><small>Clique em "Nova Biblioteca"</small></div>';
+                return;
+            }
+            
+            container.innerHTML = libraries.map(lib => `
+                <div class="table-row" style="grid-template-columns:2.5fr 1fr 1fr 1fr 120px">
+                    <div>
+                        <div class="library-info-row">
+                            <strong>${lib.name}</strong>
+                            <span class="id-badge" onclick="copyCredentials('${lib.access_id}','${lib.password}')"><i class="fas fa-key"></i> ${lib.access_id}</span>
+                        </div>
+                        <small style="color:#8892b0;display:block;margin-top:4px">${lib.location}</small>
+                    </div>
+                    <div>${lib.plan}</div>
+                    <div><span class="status-badge ${getStatusClass(lib.status)}">${lib.status}</span></div>
+                    <div>${lib.due_date || '-'}</div>
+                    <div>
+                        <i class="fas fa-copy action-icon" onclick="copyCredentials('${lib.access_id}','${lib.password}')" title="Copiar"></i>
+                        <i class="fas fa-edit action-icon" onclick="editLibrary('${lib.id}')" title="Editar"></i>
+                        <i class="fas fa-trash action-icon delete" onclick="deleteLibrary('${lib.id}')" title="Excluir"></i>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderRecentLibraries() {
+            const container = document.getElementById('recentLibrariesList');
+            const recent = libraries.slice(0, 3);
+            
+            if (!recent.length) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-building"></i><p>Nenhuma biblioteca</p></div>';
+                return;
+            }
+            
+            container.innerHTML = recent.map(lib => `
+                <div class="table-row" style="grid-template-columns:2.5fr 1fr 1fr 1fr 100px">
+                    <div>
+                        <div class="library-info-row">
+                            <strong>${lib.name}</strong>
+                            <span class="id-badge" onclick="copyCredentials('${lib.access_id}','${lib.password}')">${lib.access_id}</span>
+                        </div>
+                    </div>
+                    <div>${lib.plan}</div>
+                    <div><span class="status-badge ${getStatusClass(lib.status)}">${lib.status}</span></div>
+                    <div>${lib.created_at || '-'}</div>
+                    <div><i class="fas fa-copy action-icon" onclick="copyCredentials('${lib.access_id}','${lib.password}')"></i></div>
+                </div>
+            `).join('');
+        }
+
+        function renderPlans() {
+            const container = document.getElementById('plansContainer');
+            const select = document.getElementById('libraryPlan');
+            
+            if (!container) return;
+            
+            const plansArray = Object.values(plans);
+            
+            if (select) {
+                select.innerHTML = plansArray.map(p => `<option value="${p.name}">${p.name} - R$ ${p.price}/mês</option>`).join('');
+            }
+            
+            container.innerHTML = plansArray.map(p => `
+                <div class="plan-card" onclick="openPlanModal('${p.name}')">
+                    <h3 style="color:white;font-size:1.3rem;margin-bottom:12px">${p.name}</h3>
+                    <div style="color:#a78bfa;font-size:1.8rem;font-weight:700;margin-bottom:16px">R$ ${p.price}<small style="font-size:0.85rem;color:#8892b0">/mês</small></div>
+                    <ul style="list-style:none;color:#a0aec0;margin-bottom:20px">${p.features.split(',').map(f => `<li style="margin-bottom:8px"><i class="fas fa-check" style="color:#34d399;margin-right:8px"></i>${f.trim()}</li>`).join('')}</ul>
+                    <div style="background:rgba(124,92,255,0.08);padding:10px;border-radius:10px"><i class="fas fa-users"></i> ${p.users_limit} usuários • ${p.books_limit} livros</div>
+                    <div style="margin-top:14px;text-align:center;color:#a78bfa"><i class="fas fa-edit"></i> Clique para editar</div>
+                </div>
+            `).join('');
+        }
+
+        // ===== BIBLIOTECAS =====
+        function openLibraryModal() {
+            currentEditId = null;
+            document.getElementById('modalTitle').textContent = 'Nova Biblioteca';
+            document.getElementById('libraryForm').reset();
+            document.getElementById('libraryId').value = '';
+            document.getElementById('libraryAccessId').value = `BIB${String(libraries.length + 1).padStart(3, '0')}`;
+            generatePassword();
+            renderPlans();
+            document.getElementById('libraryModal').classList.add('active');
+        }
+
+        function editLibrary(id) {
+            const lib = libraries.find(l => l.id === id);
+            if (!lib) return;
+            
+            currentEditId = id;
+            document.getElementById('modalTitle').textContent = 'Editar Biblioteca';
+            document.getElementById('libraryId').value = lib.id;
+            document.getElementById('libraryAccessId').value = lib.access_id;
+            document.getElementById('libraryPasswordField').value = lib.password;
+            document.getElementById('libraryName').value = lib.name;
+            document.getElementById('libraryLocation').value = lib.location;
+            document.getElementById('libraryEmail').value = lib.email;
+            document.getElementById('libraryPlan').value = lib.plan;
+            document.getElementById('libraryStatus').value = lib.status;
+            renderPlans();
+            document.getElementById('libraryModal').classList.add('active');
+        }
+
+        function closeLibraryModal() {
+            document.getElementById('libraryModal').classList.remove('active');
+        }
+
+        document.getElementById('libraryForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const id = document.getElementById('libraryId').value || String(Date.now());
+            const accessId = document.getElementById('libraryAccessId').value.toUpperCase();
+            
+            if (!currentEditId && libraries.find(l => l.access_id === accessId)) {
+                alert('Este ID já está em uso!');
+                return;
+            }
+            
+            const library = {
+                id: id,
+                access_id: accessId,
+                password: document.getElementById('libraryPasswordField').value,
+                name: document.getElementById('libraryName').value,
+                location: document.getElementById('libraryLocation').value,
+                email: document.getElementById('libraryEmail').value,
+                plan: document.getElementById('libraryPlan').value,
+                status: document.getElementById('libraryStatus').value,
+                created_at: currentEditId ? libraries.find(l => l.id === id)?.created_at : new Date().toISOString().split('T')[0],
+                due_date: new Date(Date.now() + 30*24*60*60*1000).toISOString().split('T')[0]
+            };
+            
+            const { error } = await supabaseClient.from('libraries').upsert(library);
+            
+            if (!error) {
+                document.getElementById('successMessage').style.display = 'block';
+                document.getElementById('successMessage').textContent = 'Biblioteca salva com sucesso!';
+                setTimeout(async () => {
+                    closeLibraryModal();
+                    await loadAllData();
+                    document.getElementById('successMessage').style.display = 'none';
+                }, 800);
+            } else {
+                alert('Erro ao salvar: ' + error.message);
+            }
+        });
+
+        async function deleteLibrary(id) {
+            if (confirm('Excluir esta biblioteca?')) {
+                await supabaseClient.from('libraries').delete().eq('id', id);
+                await loadAllData();
+            }
+        }
+
+        function copyCredentials(id, pwd) {
+            navigator.clipboard?.writeText(`ID: ${id}\nSenha: ${pwd}`);
+            alert('Credenciais copiadas!');
+        }
+
+        // ===== PLANOS =====
+        function openPlanModal(name) {
+            const p = plans[name];
+            if (!p) return;
+            
+            document.getElementById('planName').value = name;
+            document.getElementById('planPrice').value = p.price;
+            document.getElementById('planUsers').value = p.users_limit;
+            document.getElementById('planBooks').value = p.books_limit;
+            document.getElementById('planFeatures').value = p.features;
+            document.getElementById('planModalTitle').textContent = `Editar Plano ${name}`;
+            document.getElementById('planModal').classList.add('active');
+        }
+
+        function closePlanModal() {
+            document.getElementById('planModal').classList.remove('active');
+        }
+
+        document.getElementById('planForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('planName').value;
+            
+            const planData = {
+                name: name,
+                price: parseFloat(document.getElementById('planPrice').value),
+                users_limit: document.getElementById('planUsers').value,
+                books_limit: document.getElementById('planBooks').value,
+                features: document.getElementById('planFeatures').value
+            };
+            
+            await supabaseClient.from('plans').upsert(planData);
+            await loadAllData();
+            closePlanModal();
+            alert(`Plano ${name} atualizado!`);
+        });
+
+        // ===== BACKUP =====
+        async function createBackup() {
+            const backup = {
+                id: String(Date.now()),
+                date: new Date().toLocaleString('pt-BR'),
+                size: '245 MB',
+                type: 'Manual',
+                status: 'Completo',
+                data: { libraries, plans, settings: userSettings }
+            };
+            
+            await supabaseClient.from('backups').insert(backup);
+            
+            const dataStr = JSON.stringify(backup.data, null, 2);
+            const a = document.createElement('a');
+            a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+            a.download = `backup_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            
+            await loadAllData();
+            alert('Backup criado com sucesso!');
+        }
+
+        function restoreBackup() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = async (ev) => {
+                    try {
+                        const data = JSON.parse(ev.target.result);
+                        if (data.libraries && data.plans && confirm('Restaurar backup? Dados atuais serão substituídos.')) {
+                            for (const lib of data.libraries) {
+                                await supabaseClient.from('libraries').upsert(lib);
+                            }
+                            for (const [name, plan] of Object.entries(data.plans)) {
+                                await supabaseClient.from('plans').upsert({ name, ...plan });
+                            }
+                            await loadAllData();
+                            alert('Backup restaurado!');
+                        }
+                    } catch (err) {
+                        alert('Arquivo inválido!');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        async function clearBackupHistory() {
+            if (backups.length === 0) {
+                alert('Nenhum backup para limpar.');
+                return;
+            }
+            
+            if (confirm('Limpar todo o histórico de backups?')) {
+                await supabaseClient.from('backups').delete().neq('id', '0');
+                await loadAllData();
+                alert('Histórico limpo!');
+            }
+        }
+
+        function renderBackupHistory() {
+            const container = document.getElementById('backupHistoryList');
+            
+            if (!backups.length) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-database"></i><p>Nenhum backup</p></div>';
+                return;
+            }
+            
+            container.innerHTML = backups.map(b => `
+                <div class="table-row" style="grid-template-columns:2fr 1fr 1fr 1fr 100px">
+                    <div>${b.date}</div>
+                    <div>${b.size}</div>
+                    <div>${b.type}</div>
+                    <div><span style="color:#34d399">✓ ${b.status}</span></div>
+                    <div><i class="fas fa-download action-icon" onclick="downloadBackup('${b.id}')"></i></div>
+                </div>
+            `).join('');
+        }
+
+        function downloadBackup(id) {
+            const backup = backups.find(b => b.id === id);
+            if (backup) {
+                const dataStr = JSON.stringify(backup.data, null, 2);
+                const a = document.createElement('a');
+                a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+                a.download = `backup_${backup.date.replace(/[/:]/g, '-')}.json`;
+                a.click();
+            }
+        }
+
+        // ===== CONFIGURAÇÕES =====
+        function loadSettings() {
+            document.getElementById('settingsName').value = userSettings.name || 'Matheus Pacifico';
+            document.getElementById('settingsEmail').value = userSettings.email || 'admin@aurora.com';
+            document.getElementById('settingsPhone').value = userSettings.phone || '(79) 99645-8399';
+        }
+
+        async function saveSettings() {
+            const np = document.getElementById('settingsNewPassword').value;
+            const cp = document.getElementById('settingsConfirmPassword').value;
+            
+            if (np && np !== cp) {
+                alert('As senhas não coincidem!');
+                return;
+            }
+            
+            userSettings = {
+                id: 1,
+                name: document.getElementById('settingsName').value,
+                email: document.getElementById('settingsEmail').value,
+                phone: document.getElementById('settingsPhone').value,
+                password: np || userSettings.password
+            };
+            
+            await supabaseClient.from('owner_settings').upsert(userSettings);
+            document.getElementById('userNameDisplay').textContent = userSettings.name.split(' ')[0];
+            
+            const msg = document.getElementById('settingsSuccessMessage');
+            msg.innerHTML = '<i class="fas fa-check-circle"></i> Configurações salvas!';
+            setTimeout(() => msg.innerHTML = '<i class="fas fa-info-circle"></i> Alterações aplicadas imediatamente', 2000);
+            
+            document.getElementById('settingsNewPassword').value = '';
+            document.getElementById('settingsConfirmPassword').value = '';
+        }
+
+        // ===== UTILITÁRIAS =====
+        function exportLibraries() {
+            if (!libraries.length) {
+                alert('Nenhuma biblioteca para exportar.');
+                return;
+            }
+            const dataStr = JSON.stringify(libraries, null, 2);
+            const a = document.createElement('a');
+            a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+            a.download = `bibliotecas_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+        }
+
+        function showNotifications() {
+            const pending = libraries.filter(l => l.status === 'Pendente').length;
+            alert(`📢 ${pending} biblioteca(s) pendente(s)\n${libraries.length} ativas\n${backups.length} backups`);
+        }
+
+        function updateAllStats() {
+            document.getElementById('totalLibraries').textContent = libraries.length;
+            
+            const revenue = libraries.reduce((t, l) => t + (plans[l.plan]?.price || 0), 0);
+            document.getElementById('monthlyRevenue').textContent = `R$ ${revenue}`;
+            
+            const active = libraries.filter(l => l.status === 'Ativo').length;
+            document.getElementById('activePlans').textContent = active;
+            document.getElementById('occupancyRate').textContent = libraries.length ? `${Math.round((active/libraries.length)*100)}% ocupação` : '0% ocupação';
+            
+            document.getElementById('totalBackups').textContent = backups.length;
+            document.getElementById('lastBackup').textContent = backups.length ? `Último: ${backups[0].date.split(' ')[0]}` : 'Nenhum';
+            
+            const overdue = libraries.filter(l => l.status === 'Ativo' && new Date(l.due_date) < new Date()).length;
+            document.getElementById('notificationCount').textContent = overdue;
+        }
+
+        // ===== INICIALIZAR =====
+        loadAllData();
+    </script>
+</body>
+</html>
