@@ -13,34 +13,35 @@
         
         .login-screen{position:fixed;top:0;left:0;width:100%;height:100vh;background:linear-gradient(135deg,#0a0e27 0%,#1a1f4e 100%);display:flex;align-items:center;justify-content:center;z-index:1000}
         .login-screen.hidden{display:none}
-        .login-box{background:rgba(255,255,255,0.03);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:40px 36px;width:100%;max-width:400px;box-shadow:0 25px 50px rgba(0,0,0,0.4)}
+        .login-box{background:rgba(255,255,255,0.03);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:40px 36px;width:100%;max-width:400px}
         .login-logo{text-align:center;margin-bottom:32px}
-        .login-logo i{font-size:2.8rem;color:white;filter:drop-shadow(0 0 20px rgba(124,92,255,0.5))}
+        .login-logo i{font-size:2.8rem;color:white}
         .login-logo h1{font-size:2rem;font-weight:700;color:white;margin-top:10px}
         .login-logo h1 span{background:linear-gradient(135deg,#7c5cff,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-        .login-logo p{color:#a0aec0;margin-top:4px;font-size:0.9rem}
+        .login-logo p{color:#a0aec0;margin-top:4px}
         .library-badge{background:linear-gradient(135deg,#7c5cff,#5b3cc4);padding:5px 16px;border-radius:30px;font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:white;display:inline-block;margin-top:12px}
         .input-group{margin-bottom:20px}
         .input-group label{display:block;color:#cbd5e0;margin-bottom:6px;font-weight:500;font-size:0.85rem}
         .input-field{position:relative}
         .input-field i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:white;font-size:1rem}
         .input-field input{width:100%;padding:12px 12px 12px 42px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;color:white;font-size:0.9rem}
-        .input-field input:focus{outline:none;border-color:#7c5cff;background:rgba(124,92,255,0.08)}
-        .btn-login{width:100%;padding:13px;background:linear-gradient(135deg,#7c5cff,#5b3cc4);border:none;border-radius:12px;color:white;font-weight:600;font-size:0.95rem;cursor:pointer;margin-top:8px}
-        .btn-login:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(124,92,255,0.4)}
+        .btn-login{width:100%;padding:13px;background:linear-gradient(135deg,#7c5cff,#5b3cc4);border:none;border-radius:12px;color:white;font-weight:600;cursor:pointer;margin-top:8px}
         .error-message{color:#ef4444;text-align:center;margin-top:12px;font-size:0.8rem;display:none}
         .contact-support{text-align:center;margin-top:24px;color:#8892b0;font-size:0.75rem}
         .contact-support a{color:#a78bfa;text-decoration:none}
+        .creator-info{text-align:center;margin-top:20px;color:#8892b0;font-size:0.7rem}
         
         .main-panel{display:none;height:100vh;background:#0a0e27;overflow:hidden}
         .main-panel.active{display:flex}
         .sidebar{width:260px;background:linear-gradient(180deg,#0f1433 0%,#0a0e27 100%);border-right:1px solid rgba(255,255,255,0.04);display:flex;flex-direction:column;padding:24px 0;height:100vh;overflow-y:auto}
+        .sidebar::-webkit-scrollbar{width:3px}
+        .sidebar::-webkit-scrollbar-thumb{background:rgba(124,92,255,0.3);border-radius:10px}
         .sidebar-logo{padding:0 18px 24px 24px;border-bottom:1px solid rgba(124,92,255,0.15);margin-bottom:24px}
         .sidebar-logo h2{font-size:1.6rem;font-weight:700;color:white}
         .sidebar-logo h2 span{background:linear-gradient(135deg,#7c5cff,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
         .library-info-sidebar{margin-top:6px;color:#a0aec0;font-size:0.8rem}
         .nav-menu{flex:1;padding:0 14px}
-        .nav-item{display:flex;align-items:center;gap:12px;padding:11px 16px;margin:2px 0;border-radius:12px;color:#a0aec0;font-weight:500;font-size:0.9rem;cursor:pointer;transition:all 0.2s}
+        .nav-item{display:flex;align-items:center;gap:12px;padding:11px 16px;margin:2px 0;border-radius:12px;color:#a0aec0;font-weight:500;font-size:0.9rem;cursor:pointer}
         .nav-item i{width:22px;font-size:1.1rem}
         .nav-item:hover{background:rgba(124,92,255,0.1);color:white}
         .nav-item.active{background:linear-gradient(135deg,#7c5cff,#5b3cc4);color:white}
@@ -50,8 +51,12 @@
         .plan-usage p{color:#a0aec0;font-size:0.8rem;margin-bottom:3px}
         .progress-bar{height:5px;background:rgba(255,255,255,0.08);border-radius:10px;overflow:hidden;margin:6px 0}
         .progress-fill{height:100%;background:linear-gradient(90deg,#7c5cff,#a78bfa);border-radius:10px}
+        .owner-footer{padding:16px 20px;border-top:1px solid rgba(255,255,255,0.04);margin-top:auto;font-size:0.7rem;color:#8892b0}
+        .owner-footer strong{color:#a78bfa}
         
         .content-area{flex:1;padding:24px 32px;overflow-y:auto;height:100vh}
+        .content-area::-webkit-scrollbar{width:5px}
+        .content-area::-webkit-scrollbar-thumb{background:rgba(124,92,255,0.3);border-radius:10px}
         .top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
         .page-title h1{font-size:1.8rem;font-weight:700;color:white;margin-bottom:2px}
         .page-title p{color:#a0aec0;font-size:0.9rem}
@@ -61,8 +66,7 @@
         .profile-info{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.03);padding:6px 18px 6px 12px;border-radius:40px;border:1px solid rgba(255,255,255,0.06)}
         .profile-info i{color:white;font-size:1.3rem}
         .profile-info span{color:white;font-weight:500;font-size:0.9rem}
-        .logout-btn{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:#f87171;padding:8px 18px;border-radius:12px;cursor:pointer;display:flex;align-items:center;gap:6px;font-size:0.85rem}
-        .logout-btn:hover{background:rgba(239,68,68,0.15)}
+        .logout-btn{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);color:#f87171;padding:8px 18px;border-radius:12px;cursor:pointer;display:flex;align-items:center;gap:6px}
         
         .page{display:none}
         .page.active{display:block}
@@ -75,13 +79,15 @@
         .stat-number{font-size:2.2rem;font-weight:700;color:white}
         
         .table-container{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);border-radius:16px;overflow:hidden;margin-top:20px}
-        .table-header{display:grid;padding:14px 20px;background:rgba(124,92,255,0.08);color:#cbd5e0;font-weight:600;font-size:0.75rem;text-transform:uppercase}
-        .table-row{display:grid;padding:16px 20px;align-items:center;border-bottom:1px solid rgba(255,255,255,0.03);color:white;font-size:0.9rem}
+        .table-header{display:grid;padding:14px 20px;background:rgba(124,92,255,0.08);color:#cbd5e0;font-weight:600;font-size:0.75rem;text-transform:uppercase;gap:8px}
+        .table-row{display:grid;padding:16px 20px;align-items:center;border-bottom:1px solid rgba(255,255,255,0.03);color:white;font-size:0.9rem;gap:8px}
         .table-row:last-child{border-bottom:none}
         .table-row:hover{background:rgba(124,92,255,0.04)}
         
+        .book-cover-thumb{width:40px;height:56px;border-radius:6px;object-fit:cover;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1)}
+        .book-cover-preview{width:100%;max-width:180px;border-radius:12px;margin:16px auto;display:block;border:2px solid rgba(124,92,255,0.3)}
+        
         .btn-primary{background:linear-gradient(135deg,#7c5cff,#5b3cc4);color:white;border:none;padding:11px 22px;border-radius:12px;font-weight:500;font-size:0.9rem;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
-        .btn-primary:hover{transform:translateY(-1px)}
         .btn-secondary{background:rgba(255,255,255,0.04);color:white;border:1px solid rgba(255,255,255,0.08);padding:10px 20px;border-radius:12px;font-weight:500;font-size:0.9rem;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
         .action-buttons{display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap}
         
@@ -92,24 +98,26 @@
         .action-icon{color:white;cursor:pointer;margin:0 6px;font-size:0.95rem}
         .action-icon:hover{color:#a78bfa}
         .action-icon.delete{color:#f87171}
-        .action-icon.delete:hover{color:#ef4444}
+        
+        .category-tag{background:rgba(124,92,255,0.15);color:white;padding:6px 14px;border-radius:20px;font-size:0.8rem;display:inline-flex;align-items:center;gap:8px;margin:4px}
+        .category-tag i{cursor:pointer;color:#f87171}
         
         .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.75);z-index:2000;align-items:center;justify-content:center}
         .modal.active{display:flex}
-        .modal-content{background:#0f1433;border:1px solid rgba(124,92,255,0.25);border-radius:20px;padding:32px;max-width:500px;width:90%;max-height:80vh;overflow-y:auto}
+        .modal-content{background:#0f1433;border:1px solid rgba(124,92,255,0.25);border-radius:20px;padding:32px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto}
         .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
         .modal-header h2{color:white;margin-bottom:0;font-size:1.2rem}
         .close-modal{color:#8892b0;font-size:1.3rem;cursor:pointer}
-        .close-modal:hover{color:#ef4444}
         .form-group{margin-bottom:20px}
         .form-group label{display:block;color:#cbd5e0;margin-bottom:6px;font-weight:500;font-size:0.85rem}
-        .form-group input,.form-group select{width:100%;padding:11px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;color:white;font-size:0.9rem}
-        .form-group input:focus,.form-group select:focus{outline:none;border-color:#7c5cff}
+        .form-group input,.form-group select,.form-group textarea{width:100%;padding:11px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;color:white;font-size:0.9rem}
         .form-group select option{background:#0f1433;color:white}
+        .isbn-search{display:flex;gap:10px;margin-bottom:16px}
+        .cover-upload-area{border:2px dashed rgba(124,92,255,0.3);border-radius:16px;padding:20px;text-align:center;cursor:pointer;margin-bottom:20px}
+        .cover-upload-area i{font-size:2rem;color:#7c5cff;margin-bottom:8px}
         
         .empty-state{text-align:center;padding:40px 20px;color:#a0aec0}
         .empty-state i{font-size:3rem;color:#7c5cff;margin-bottom:14px;opacity:0.4}
-        .empty-state p{font-size:0.95rem;margin-bottom:4px;color:#cbd5e0}
         
         .copyright{text-align:center;margin-top:32px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.04);color:#8892b0;font-size:0.8rem}
         h2{color:white;margin-bottom:18px;font-size:1.3rem;font-weight:600}
@@ -126,20 +134,22 @@
                 <div class="library-badge"><i class="fas fa-building" style="margin-right:6px"></i>ÁREA DO CLIENTE</div>
             </div>
             <form id="loginForm">
-                <div class="input-group">
-                    <label>ID da Biblioteca</label>
-                    <div class="input-field"><i class="fas fa-key"></i><input type="text" id="libraryId" placeholder="Ex: BIB001" required style="text-transform:uppercase"></div>
-                </div>
-                <div class="input-group">
-                    <label>Senha de Acesso</label>
-                    <div class="input-field"><i class="fas fa-lock"></i><input type="password" id="libraryPassword" placeholder="••••••••" required></div>
-                </div>
+                <div class="input-group"><label>ID da Biblioteca</label><div class="input-field"><i class="fas fa-key"></i><input type="text" id="libraryId" placeholder="Ex: BIB001" required style="text-transform:uppercase"></div></div>
+                <div class="input-group"><label>Senha de Acesso</label><div class="input-field"><i class="fas fa-lock"></i><input type="password" id="libraryPassword" placeholder="••••••••" required></div></div>
                 <div class="error-message" id="loginError"></div>
                 <button type="submit" class="btn-login"><i class="fas fa-sign-in-alt"></i> Acessar Painel</button>
             </form>
-            <div class="contact-support">
-                <p>Problemas com o acesso? <a href="#">Contate o Suporte</a></p>
-            </div>
+            <div class="contact-support"><p>Problemas com o acesso? <a href="https://wa.me/5579996458399" target="_blank"><i class="fab fa-whatsapp"></i> (79) 99645-8399</a></p></div>
+            <div class="creator-info"><p>© 2026 Aurora v1.0 • Criado por <strong>Matheus Pacifico</strong></p></div>
+        </div>
+    </div>
+
+    <!-- MODAL DE CATEGORIAS -->
+    <div class="modal" id="categoryModal">
+        <div class="modal-content">
+            <div class="modal-header"><h2><i class="fas fa-tags"></i> Gerenciar Categorias</h2><i class="fas fa-times close-modal" onclick="closeCategoryModal()"></i></div>
+            <div class="form-group"><label>Nova Categoria</label><div style="display:flex;gap:10px"><input type="text" id="newCategoryName" placeholder="Nome da categoria" style="flex:1"><button type="button" class="btn-primary" onclick="addCategory()"><i class="fas fa-plus"></i></button></div></div>
+            <div id="categoryList" style="display:flex;flex-wrap:wrap"></div>
         </div>
     </div>
 
@@ -147,16 +157,22 @@
     <div class="modal" id="bookModal">
         <div class="modal-content">
             <div class="modal-header"><h2 id="modalTitle">Novo Livro</h2><i class="fas fa-times close-modal" onclick="closeBookModal()"></i></div>
+            <div class="cover-upload-area" onclick="document.getElementById('coverUploadInput').click()"><i class="fas fa-cloud-upload-alt"></i><p style="color:white">Clique para fazer upload da capa</p><small style="color:#8892b0">Ou use a busca por ISBN</small><input type="file" id="coverUploadInput" accept="image/*" style="display:none" onchange="handleCoverUpload(event)"></div>
+            <img id="bookCoverPreview" class="book-cover-preview" style="display:none">
+            <button type="button" class="btn-secondary" onclick="clearCover()" style="margin-bottom:16px;width:100%"><i class="fas fa-trash"></i> Remover Capa</button>
+            <div class="isbn-search"><input type="text" id="isbnSearchInput" placeholder="Digite o ISBN"><button type="button" class="btn-secondary" onclick="searchByISBN()"><i class="fas fa-search"></i> Buscar</button></div>
+            <div id="isbnLoading" style="display:none;text-align:center;padding:20px;color:white"><i class="fas fa-spinner fa-spin"></i> Buscando...</div>
             <form id="bookForm">
-                <input type="hidden" id="bookId">
+                <input type="hidden" id="bookId"><input type="hidden" id="bookCover">
                 <div class="form-group"><label>Título</label><input type="text" id="bookTitle" required></div>
                 <div class="form-group"><label>Autor</label><input type="text" id="bookAuthor" required></div>
                 <div class="form-group"><label>ISBN</label><input type="text" id="bookIsbn"></div>
                 <div class="form-group"><label>Editora</label><input type="text" id="bookPublisher"></div>
                 <div class="form-group"><label>Ano</label><input type="text" id="bookYear"></div>
-                <div class="form-group"><label>Categoria</label><select id="bookCategory" required><option value="Ficção">Ficção</option><option value="Não-Ficção">Não-Ficção</option><option value="Infantil">Infantil</option><option value="Didático">Didático</option><option value="Técnico">Técnico</option><option value="Outros">Outros</option></select></div>
+                <div class="form-group"><label>Categoria</label><select id="bookCategory" required></select></div>
                 <div class="form-group"><label>Quantidade</label><input type="number" id="bookQuantity" min="1" value="1" required></div>
                 <div class="form-group"><label>Localização</label><input type="text" id="bookLocation"></div>
+                <div class="form-group"><label>Sinopse</label><textarea id="bookDescription" rows="2"></textarea></div>
                 <button type="submit" class="btn-primary" style="width:100%"><i class="fas fa-save"></i> Salvar Livro</button>
             </form>
         </div>
@@ -198,7 +214,7 @@
             <form id="fineForm">
                 <div class="form-group"><label>Valor da multa por dia (R$)</label><input type="number" id="fineValue" min="0" step="0.01" value="2.00" required></div>
                 <div class="form-group"><label>Dias de tolerância</label><input type="number" id="fineGraceDays" min="0" value="1"></div>
-                <div class="form-group"><label>Valor máximo da multa (R$)</label><input type="number" id="fineMaxValue" min="0" step="0.01" value="50.00"></div>
+                <div class="form-group"><label>Valor máximo (R$)</label><input type="number" id="fineMaxValue" min="0" step="0.01" value="50.00"></div>
                 <div class="form-group"><label style="display:flex;align-items:center;gap:10px"><input type="checkbox" id="fineBlockLoans" checked style="width:auto"> Bloquear empréstimos com multa pendente</label></div>
                 <button type="submit" class="btn-primary" style="width:100%"><i class="fas fa-save"></i> Salvar</button>
             </form>
@@ -227,9 +243,12 @@
                     <div class="progress-bar"><div class="progress-fill" id="studentsProgress" style="width:0%"></div></div>
                 </div>
             </div>
-            <div style="padding:0 14px 20px;margin-top:auto">
-                <div class="logout-btn" onclick="logout()" style="width:100%;justify-content:center"><i class="fas fa-sign-out-alt"></i> Sair</div>
+            <div class="owner-footer">
+                <p><strong>Matheus Pacifico</strong></p>
+                <p><i class="fab fa-whatsapp"></i> (79) 99645-8399</p>
+                <p style="margin-top:8px">© 2026 Aurora v1.0</p>
             </div>
+            <div style="padding:0 14px 20px"><div class="logout-btn" onclick="logout()" style="width:100%;justify-content:center"><i class="fas fa-sign-out-alt"></i> Sair</div></div>
         </div>
 
         <div class="content-area">
@@ -241,13 +260,12 @@
                 </div>
             </div>
 
-            <!-- DASHBOARD -->
             <div class="page active" id="dashboard">
                 <div class="stats-grid">
                     <div class="stat-card"><div class="stat-header"><h3>Total de Livros</h3><div class="stat-icon"><i class="fas fa-book"></i></div></div><div class="stat-number" id="totalBooks">0</div></div>
-                    <div class="stat-card"><div class="stat-header"><h3>Alunos Cadastrados</h3><div class="stat-icon"><i class="fas fa-users"></i></div></div><div class="stat-number" id="totalStudents">0</div></div>
-                    <div class="stat-card"><div class="stat-header"><h3>Livros Emprestados</h3><div class="stat-icon"><i class="fas fa-hand-holding"></i></div></div><div class="stat-number" id="activeLoans">0</div></div>
-                    <div class="stat-card"><div class="stat-header"><h3>Multas Pendentes</h3><div class="stat-icon"><i class="fas fa-coins"></i></div></div><div class="stat-number" id="pendingFines">R$ 0</div></div>
+                    <div class="stat-card"><div class="stat-header"><h3>Alunos</h3><div class="stat-icon"><i class="fas fa-users"></i></div></div><div class="stat-number" id="totalStudents">0</div></div>
+                    <div class="stat-card"><div class="stat-header"><h3>Emprestados</h3><div class="stat-icon"><i class="fas fa-hand-holding"></i></div></div><div class="stat-number" id="activeLoans">0</div></div>
+                    <div class="stat-card"><div class="stat-header"><h3>Multas</h3><div class="stat-icon"><i class="fas fa-coins"></i></div></div><div class="stat-number" id="pendingFines">R$ 0</div></div>
                 </div>
                 <h2>Empréstimos Recentes</h2>
                 <div class="table-container">
@@ -256,16 +274,17 @@
                 </div>
             </div>
 
-            <!-- ACERVO -->
             <div class="page" id="books">
-                <div class="action-buttons"><button class="btn-primary" onclick="openBookModal()"><i class="fas fa-plus-circle"></i> Novo Livro</button></div>
+                <div class="action-buttons">
+                    <button class="btn-primary" onclick="openBookModal()"><i class="fas fa-plus-circle"></i> Novo Livro</button>
+                    <button class="btn-secondary" onclick="openCategoryModal()"><i class="fas fa-tags"></i> Categorias</button>
+                </div>
                 <div class="table-container">
-                    <div class="table-header" style="grid-template-columns:2.5fr 1.5fr 1fr 0.8fr 0.8fr 1fr 100px"><div>Título / Autor</div><div>ISBN</div><div>Categoria</div><div>Qtd</div><div>Disp</div><div>Local</div><div>Ações</div></div>
+                    <div class="table-header" style="grid-template-columns:50px 2.5fr 1.2fr 1fr 0.8fr 0.8fr 1fr 100px"><div>Capa</div><div>Título / Autor</div><div>ISBN</div><div>Categoria</div><div>Qtd</div><div>Disp</div><div>Local</div><div>Ações</div></div>
                     <div id="booksList"></div>
                 </div>
             </div>
 
-            <!-- ALUNOS -->
             <div class="page" id="students">
                 <div class="action-buttons"><button class="btn-primary" onclick="openStudentModal()"><i class="fas fa-plus-circle"></i> Novo Aluno</button></div>
                 <div class="table-container">
@@ -274,7 +293,6 @@
                 </div>
             </div>
 
-            <!-- EMPRÉSTIMOS -->
             <div class="page" id="loans">
                 <div class="action-buttons"><button class="btn-primary" onclick="openLoanModal()"><i class="fas fa-plus-circle"></i> Novo Empréstimo</button></div>
                 <div class="table-container">
@@ -283,7 +301,6 @@
                 </div>
             </div>
 
-            <!-- MULTAS -->
             <div class="page" id="fines">
                 <div class="action-buttons"><button class="btn-primary" onclick="openFineModal()"><i class="fas fa-cog"></i> Configurar Multas</button></div>
                 <div class="table-container">
@@ -292,7 +309,6 @@
                 </div>
             </div>
 
-            <!-- CONFIGURAÇÕES -->
             <div class="page" id="settings">
                 <h2>Configurações</h2>
                 <div style="max-width:460px">
@@ -302,32 +318,28 @@
                 </div>
             </div>
 
-            <div class="copyright"><p>© 2026 Aurora • Gestão de Biblioteca v1.0</p></div>
+            <div class="copyright"><p>© 2026 Aurora • Gestão de Biblioteca v1.0</p><p style="margin-top:6px">Desenvolvido por Matheus Pacifico | (79) 99645-8399</p></div>
         </div>
     </div>
 
     <script>
-        // CONFIGURAÇÃO SUPABASE
         const SUPABASE_URL = 'https://wrkhdeodjamdhmdsapnr.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Indya2hkZW9kamFtZGhtZHNhcG5yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY4MDg1MDgsImV4cCI6MjA5MjM4NDUwOH0.rxvTkwboBwxv_RPQp8X2RyW_3-izoecy5x2Y7yzXQWU';
         const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         
         let currentLibrary = null;
-        let books = [];
-        let students = [];
-        let loans = [];
+        let books = [], students = [], loans = [], categories = [];
         let fineSettings = { value: 2.00, graceDays: 1, maxValue: 50.00, blockLoans: true };
         let librarySettings = { defaultLoanDays: 7, maxBooksPerStudent: 3 };
         let plans = {};
+        let currentCoverData = null;
 
         // LOGIN
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const accessId = document.getElementById('libraryId').value.toUpperCase().trim();
             const password = document.getElementById('libraryPassword').value;
-            
             const { data, error } = await supabaseClient.from('libraries').select('*').eq('access_id', accessId).eq('password', password).single();
-            
             if (data && data.status === 'Ativo') {
                 currentLibrary = data;
                 await loadPlans();
@@ -337,22 +349,13 @@
                 initializePanel();
             } else {
                 document.getElementById('loginError').style.display = 'block';
-                document.getElementById('loginError').textContent = 'ID ou senha incorretos, ou biblioteca inativa';
             }
         });
 
-        function logout() {
-            currentLibrary = null;
-            document.getElementById('loginScreen').classList.remove('hidden');
-            document.getElementById('mainPanel').classList.remove('active');
-            document.getElementById('libraryPassword').value = '';
-        }
+        function logout() { currentLibrary = null; document.getElementById('loginScreen').classList.remove('hidden'); document.getElementById('mainPanel').classList.remove('active'); }
 
-        async function loadPlans() {
-            const { data } = await supabaseClient.from('plans').select('*');
-            if (data) data.forEach(p => { plans[p.name] = p; });
-        }
-
+        async function loadPlans() { const { data } = await supabaseClient.from('plans').select('*'); if (data) data.forEach(p => plans[p.name] = p); }
+        
         async function loadLibraryData() {
             const libId = currentLibrary.id;
             const { data: b } = await supabaseClient.from('books').select('*').eq('library_id', libId);
@@ -361,6 +364,8 @@
             students = s || [];
             const { data: l } = await supabaseClient.from('loans').select('*').eq('library_id', libId);
             loans = l || [];
+            const { data: c } = await supabaseClient.from('categories').select('*').eq('library_id', libId);
+            categories = c?.map(x => x.name) || ['Ficção', 'Não-Ficção', 'Infantil', 'Didático', 'Técnico'];
             const { data: f } = await supabaseClient.from('library_settings').select('*').eq('library_id', libId).single();
             if (f) { fineSettings = f.fine_settings || fineSettings; librarySettings = f.loan_settings || librarySettings; }
         }
@@ -369,28 +374,73 @@
             document.getElementById('sidebarLibraryName').textContent = currentLibrary.name;
             document.getElementById('libraryNameDisplay').textContent = currentLibrary.name;
             document.getElementById('planNameDisplay').textContent = `Plano ${currentLibrary.plan}`;
-            renderAll();
-            updateAllStats();
+            renderAll(); updateAllStats();
         }
 
         // NAVEGAÇÃO
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', function() {
-                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-                this.classList.add('active');
-                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-                document.getElementById(this.dataset.page).classList.add('active');
-                const titles = { dashboard: 'Dashboard', books: 'Acervo', students: 'Alunos', loans: 'Empréstimos', fines: 'Multas', settings: 'Configurações' };
-                document.getElementById('pageTitle').textContent = titles[this.dataset.page];
-                if (this.dataset.page === 'fines') renderFines();
-                if (this.dataset.page === 'settings') loadSettings();
-            });
-        });
+        document.querySelectorAll('.nav-item').forEach(item => { item.addEventListener('click', function() {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); this.classList.add('active');
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(this.dataset.page).classList.add('active');
+            document.getElementById('pageTitle').textContent = { dashboard:'Dashboard', books:'Acervo', students:'Alunos', loans:'Empréstimos', fines:'Multas', settings:'Configurações' }[this.dataset.page];
+            if (this.dataset.page === 'fines') renderFines();
+            if (this.dataset.page === 'settings') loadSettings();
+        });});
+
+        // CAPA
+        function handleCoverUpload(e) { const f = e.target.files[0]; if (f) { const r = new FileReader(); r.onload = ev => { currentCoverData = ev.target.result; document.getElementById('bookCoverPreview').src = currentCoverData; document.getElementById('bookCoverPreview').style.display = 'block'; document.getElementById('bookCover').value = currentCoverData; }; r.readAsDataURL(f); } }
+        function clearCover() { currentCoverData = null; document.getElementById('bookCoverPreview').style.display = 'none'; document.getElementById('bookCover').value = ''; }
+
+        // ISBN
+        async function searchByISBN() {
+            const isbn = document.getElementById('isbnSearchInput').value.replace(/[^0-9X]/g, '');
+            if (!isbn) { alert('Digite um ISBN'); return; }
+            document.getElementById('isbnLoading').style.display = 'block';
+            try {
+                const r = await fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`);
+                const d = await r.json();
+                if (d.items?.[0]) {
+                    const b = d.items[0].volumeInfo;
+                    document.getElementById('bookTitle').value = b.title || '';
+                    document.getElementById('bookAuthor').value = b.authors?.join(', ') || '';
+                    document.getElementById('bookIsbn').value = isbn;
+                    document.getElementById('bookPublisher').value = b.publisher || '';
+                    document.getElementById('bookYear').value = b.publishedDate?.substring(0,4) || '';
+                    document.getElementById('bookDescription').value = b.description || '';
+                    if (b.imageLinks?.thumbnail) {
+                        currentCoverData = b.imageLinks.thumbnail.replace('http://', 'https://');
+                        document.getElementById('bookCoverPreview').src = currentCoverData;
+                        document.getElementById('bookCoverPreview').style.display = 'block';
+                        document.getElementById('bookCover').value = currentCoverData;
+                    }
+                    alert('✅ Livro encontrado!');
+                } else { alert('❌ Não encontrado'); }
+            } catch { alert('Erro na busca'); }
+            document.getElementById('isbnLoading').style.display = 'none';
+        }
+
+        // CATEGORIAS
+        function openCategoryModal() { document.getElementById('categoryModal').classList.add('active'); renderCategoryList(); }
+        function closeCategoryModal() { document.getElementById('categoryModal').classList.remove('active'); }
+        function addCategory() {
+            const n = document.getElementById('newCategoryName').value.trim();
+            if (n && !categories.includes(n)) { categories.push(n); saveCategories(); renderCategoryList(); document.getElementById('newCategoryName').value = ''; }
+        }
+        function deleteCategory(cat) { if (confirm(`Excluir "${cat}"?`)) { categories = categories.filter(c => c !== cat); saveCategories(); renderCategoryList(); } }
+        async function saveCategories() {
+            await supabaseClient.from('categories').delete().eq('library_id', currentLibrary.id);
+            if (categories.length) await supabaseClient.from('categories').insert(categories.map(c => ({ library_id: currentLibrary.id, name: c })));
+        }
+        function renderCategoryList() {
+            document.getElementById('categoryList').innerHTML = categories.map(c => `<span class="category-tag">${c} <i class="fas fa-times" onclick="deleteCategory('${c}')"></i></span>`).join('');
+            const s = document.getElementById('bookCategory'); if (s) s.innerHTML = categories.map(c => `<option value="${c}">${c}</option>`).join('');
+        }
 
         // LIVROS
         function openBookModal(id = null) {
+            renderCategoryList(); clearCover();
             if (id) {
-                const b = books.find(x => x.id === id);
+                const b = books.find(x => x.id == id);
                 document.getElementById('modalTitle').textContent = 'Editar Livro';
                 document.getElementById('bookId').value = b.id;
                 document.getElementById('bookTitle').value = b.title;
@@ -401,10 +451,11 @@
                 document.getElementById('bookCategory').value = b.category;
                 document.getElementById('bookQuantity').value = b.quantity;
                 document.getElementById('bookLocation').value = b.location || '';
+                document.getElementById('bookDescription').value = b.description || '';
+                if (b.cover) { document.getElementById('bookCoverPreview').src = b.cover; document.getElementById('bookCoverPreview').style.display = 'block'; document.getElementById('bookCover').value = b.cover; }
             } else {
                 document.getElementById('modalTitle').textContent = 'Novo Livro';
-                document.getElementById('bookForm').reset();
-                document.getElementById('bookId').value = '';
+                document.getElementById('bookForm').reset(); document.getElementById('bookId').value = '';
             }
             document.getElementById('bookModal').classList.add('active');
         }
@@ -413,52 +464,36 @@
             e.preventDefault();
             const id = document.getElementById('bookId').value || String(Date.now());
             const qty = parseInt(document.getElementById('bookQuantity').value);
-            const book = { id, library_id: currentLibrary.id, title: document.getElementById('bookTitle').value, author: document.getElementById('bookAuthor').value, isbn: document.getElementById('bookIsbn').value, publisher: document.getElementById('bookPublisher').value, year: document.getElementById('bookYear').value, category: document.getElementById('bookCategory').value, quantity: qty, available: qty, location: document.getElementById('bookLocation').value };
-            const idx = books.findIndex(b => b.id === id);
+            const book = { id, library_id: currentLibrary.id, title: document.getElementById('bookTitle').value, author: document.getElementById('bookAuthor').value, isbn: document.getElementById('bookIsbn').value, publisher: document.getElementById('bookPublisher').value, year: document.getElementById('bookYear').value, category: document.getElementById('bookCategory').value, quantity: qty, available: qty, location: document.getElementById('bookLocation').value, description: document.getElementById('bookDescription').value, cover: document.getElementById('bookCover').value || null };
+            const idx = books.findIndex(b => b.id == id);
             if (idx >= 0) { book.available = books[idx].available + (qty - books[idx].quantity); }
             await supabaseClient.from('books').upsert(book);
-            await loadLibraryData();
-            closeBookModal();
-            renderBooks();
+            await loadLibraryData(); closeBookModal(); renderBooks(); updateAllStats();
         });
-        async function deleteBook(id) { if (confirm('Excluir?')) { await supabaseClient.from('books').delete().eq('id', id); await loadLibraryData(); renderBooks(); } }
+        async function deleteBook(id) { if (confirm('Excluir?')) { await supabaseClient.from('books').delete().eq('id', id); await loadLibraryData(); renderBooks(); updateAllStats(); } }
         function renderBooks() {
             const c = document.getElementById('booksList');
             if (!books.length) { c.innerHTML = '<div class="empty-state"><i class="fas fa-book"></i><p>Nenhum livro</p></div>'; return; }
-            c.innerHTML = books.map(b => `<div class="table-row" style="grid-template-columns:2.5fr 1.5fr 1fr 0.8fr 0.8fr 1fr 100px"><div><strong>${b.title}</strong><br><small>${b.author}</small></div><div>${b.isbn||'-'}</div><div>${b.category}</div><div>${b.quantity}</div><div><span class="status-badge ${b.available>0?'status-available':'status-loaned'}">${b.available}</span></div><div>${b.location||'-'}</div><div><i class="fas fa-edit action-icon" onclick="openBookModal('${b.id}')"></i><i class="fas fa-trash action-icon delete" onclick="deleteBook('${b.id}')"></i></div></div>`).join('');
+            c.innerHTML = books.map(b => `<div class="table-row" style="grid-template-columns:50px 2.5fr 1.2fr 1fr 0.8fr 0.8fr 1fr 100px"><div>${b.cover?`<img src="${b.cover}" class="book-cover-thumb">`:'<div class="book-cover-thumb" style="display:flex;align-items:center;justify-content:center"><i class="fas fa-book"></i></div>'}</div><div><strong>${b.title}</strong><br><small>${b.author}</small></div><div><small>${b.isbn||'-'}</small></div><div>${b.category}</div><div>${b.quantity}</div><div><span class="status-badge ${b.available>0?'status-available':'status-loaned'}">${b.available}</span></div><div><small>${b.location||'-'}</small></div><div><i class="fas fa-edit action-icon" onclick="openBookModal('${b.id}')"></i><i class="fas fa-trash action-icon delete" onclick="deleteBook('${b.id}')"></i></div></div>`).join('');
         }
 
         // ALUNOS
         function openStudentModal(id = null) {
-            if (id) {
-                const s = students.find(x => x.id === id);
-                document.getElementById('studentModalTitle').textContent = 'Editar Aluno';
-                document.getElementById('studentId').value = s.id;
-                document.getElementById('studentName').value = s.name;
-                document.getElementById('studentRa').value = s.ra;
-                document.getElementById('studentEmail').value = s.email;
-                document.getElementById('studentPhone').value = s.phone || '';
-                document.getElementById('studentClass').value = s.class || '';
-            } else {
-                document.getElementById('studentModalTitle').textContent = 'Novo Aluno';
-                document.getElementById('studentForm').reset();
-                document.getElementById('studentId').value = '';
-            }
+            if (id) { const s = students.find(x => x.id == id); document.getElementById('studentModalTitle').textContent = 'Editar Aluno'; document.getElementById('studentId').value = s.id; document.getElementById('studentName').value = s.name; document.getElementById('studentRa').value = s.ra; document.getElementById('studentEmail').value = s.email; document.getElementById('studentPhone').value = s.phone||''; document.getElementById('studentClass').value = s.class||''; }
+            else { document.getElementById('studentModalTitle').textContent = 'Novo Aluno'; document.getElementById('studentForm').reset(); document.getElementById('studentId').value = ''; }
             document.getElementById('studentModal').classList.add('active');
         }
         function closeStudentModal() { document.getElementById('studentModal').classList.remove('active'); }
         document.getElementById('studentForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const id = document.getElementById('studentId').value || String(Date.now());
-            const student = { id, library_id: currentLibrary.id, name: document.getElementById('studentName').value, ra: document.getElementById('studentRa').value, email: document.getElementById('studentEmail').value, phone: document.getElementById('studentPhone').value, class: document.getElementById('studentClass').value, loans_count: 0, fines: 0 };
-            const idx = students.findIndex(s => s.id === id);
-            if (idx >= 0) { student.loans_count = students[idx].loans_count; student.fines = students[idx].fines; }
-            await supabaseClient.from('students').upsert(student);
-            await loadLibraryData();
-            closeStudentModal();
-            renderStudents();
+            const s = { id, library_id: currentLibrary.id, name: document.getElementById('studentName').value, ra: document.getElementById('studentRa').value, email: document.getElementById('studentEmail').value, phone: document.getElementById('studentPhone').value, class: document.getElementById('studentClass').value, loans_count: 0, fines: 0 };
+            const idx = students.findIndex(x => x.id == id);
+            if (idx >= 0) { s.loans_count = students[idx].loans_count; s.fines = students[idx].fines; }
+            await supabaseClient.from('students').upsert(s);
+            await loadLibraryData(); closeStudentModal(); renderStudents(); updateAllStats();
         });
-        async function deleteStudent(id) { if (confirm('Excluir?')) { await supabaseClient.from('students').delete().eq('id', id); await loadLibraryData(); renderStudents(); } }
+        async function deleteStudent(id) { if (confirm('Excluir?')) { await supabaseClient.from('students').delete().eq('id', id); await loadLibraryData(); renderStudents(); updateAllStats(); } }
         function renderStudents() {
             const c = document.getElementById('studentsList');
             if (!students.length) { c.innerHTML = '<div class="empty-state"><i class="fas fa-users"></i><p>Nenhum aluno</p></div>'; return; }
@@ -467,12 +502,11 @@
 
         // EMPRÉSTIMOS
         function openLoanModal() {
-            const studentSelect = document.getElementById('loanStudent');
-            const bookSelect = document.getElementById('loanBook');
-            const availStudents = students.filter(s => (fineSettings.blockLoans ? s.fines === 0 : true) && s.loans_count < librarySettings.maxBooksPerStudent);
-            studentSelect.innerHTML = availStudents.map(s => `<option value="${s.id}">${s.name} (RA: ${s.ra})</option>`).join('');
-            const availBooks = books.filter(b => b.available > 0);
-            bookSelect.innerHTML = availBooks.map(b => `<option value="${b.id}">${b.title} (${b.available} disp)</option>`).join('');
+            const ss = document.getElementById('loanStudent'), bs = document.getElementById('loanBook');
+            const availS = students.filter(s => (fineSettings.blockLoans ? !s.fines : true) && s.loans_count < librarySettings.maxBooksPerStudent);
+            ss.innerHTML = availS.map(s => `<option value="${s.id}">${s.name} (RA: ${s.ra})</option>`).join('');
+            const availB = books.filter(b => b.available > 0);
+            bs.innerHTML = availB.map(b => `<option value="${b.id}">${b.title} (${b.available} disp)</option>`).join('');
             const d = new Date(); d.setDate(d.getDate() + librarySettings.defaultLoanDays);
             document.getElementById('loanReturnDate').value = d.toISOString().split('T')[0];
             document.getElementById('loanModal').classList.add('active');
@@ -480,55 +514,58 @@
         function closeLoanModal() { document.getElementById('loanModal').classList.remove('active'); }
         document.getElementById('loanForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const studentId = document.getElementById('loanStudent').value;
-            const bookId = document.getElementById('loanBook').value;
-            if (!studentId || !bookId) return;
-            const student = students.find(s => s.id === studentId);
-            const book = books.find(b => b.id === bookId);
-            if (book.available > 0) {
-                const loan = { id: String(Date.now()), library_id: currentLibrary.id, book_id: bookId, book_title: book.title, student_id: studentId, student_name: student.name, loan_date: new Date().toLocaleDateString('pt-BR'), return_date: new Date(document.getElementById('loanReturnDate').value + 'T00:00:00').toLocaleDateString('pt-BR'), status: 'Emprestado', fine: 0 };
+            const sid = document.getElementById('loanStudent').value, bid = document.getElementById('loanBook').value;
+            if (!sid || !bid) return;
+            const s = students.find(x => x.id == sid), b = books.find(x => x.id == bid);
+            if (b.available > 0) {
+                const loan = { id: String(Date.now()), library_id: currentLibrary.id, book_id: bid, book_title: b.title, student_id: sid, student_name: s.name, loan_date: new Date().toLocaleDateString('pt-BR'), return_date: new Date(document.getElementById('loanReturnDate').value + 'T00:00:00').toLocaleDateString('pt-BR'), status: 'Emprestado', fine: 0 };
                 await supabaseClient.from('loans').insert(loan);
-                book.available--; student.loans_count++;
-                await supabaseClient.from('books').update({ available: book.available }).eq('id', bookId);
-                await supabaseClient.from('students').update({ loans_count: student.loans_count }).eq('id', studentId);
-                await loadLibraryData();
-                closeLoanModal();
-                renderLoans();
+                b.available--; s.loans_count++;
+                await supabaseClient.from('books').update({ available: b.available }).eq('id', bid);
+                await supabaseClient.from('students').update({ loans_count: s.loans_count }).eq('id', sid);
+                await loadLibraryData(); closeLoanModal(); renderLoans(); updateAllStats();
                 alert('✅ Empréstimo registrado!');
             }
         });
-        async function returnBook(loanId) {
-            const loan = loans.find(l => l.id === loanId);
-            if (loan && loan.status === 'Emprestado') {
-                const book = books.find(b => b.id === loan.book_id);
-                const student = students.find(s => s.id === loan.student_id);
-                const parts = loan.return_date.split('/'); const retDate = new Date(parts[2], parts[1]-1, parts[0]);
+        async function returnBook(id) {
+            const l = loans.find(x => x.id == id);
+            if (l?.status === 'Emprestado') {
+                const b = books.find(x => x.id == l.book_id), s = students.find(x => x.id == l.student_id);
+                const parts = l.return_date.split('/'); const ret = new Date(parts[2], parts[1]-1, parts[0]);
                 const today = new Date(); today.setHours(0,0,0,0);
-                const days = Math.max(0, Math.ceil((today - retDate) / (1000*60*60*24)));
+                const days = Math.max(0, Math.ceil((today - ret) / 86400000));
                 let fine = 0;
                 if (days > fineSettings.graceDays) { fine = (days - fineSettings.graceDays) * fineSettings.value; if (fineSettings.maxValue > 0) fine = Math.min(fine, fineSettings.maxValue); }
-                loan.status = 'Devolvido'; loan.actual_return_date = new Date().toLocaleDateString('pt-BR'); loan.fine = fine;
-                book.available++; student.loans_count--; if (fine > 0) student.fines = (student.fines || 0) + fine;
-                await supabaseClient.from('loans').update({ status: loan.status, actual_return_date: loan.actual_return_date, fine: fine }).eq('id', loanId);
-                await supabaseClient.from('books').update({ available: book.available }).eq('id', book.id);
-                await supabaseClient.from('students').update({ loans_count: student.loans_count, fines: student.fines }).eq('id', student.id);
-                await loadLibraryData();
-                renderLoans();
+                l.status = 'Devolvido'; l.actual_return_date = new Date().toLocaleDateString('pt-BR'); l.fine = fine;
+                b.available++; s.loans_count--; if (fine > 0) s.fines = (s.fines || 0) + fine;
+                await supabaseClient.from('loans').update({ status: l.status, actual_return_date: l.actual_return_date, fine }).eq('id', id);
+                await supabaseClient.from('books').update({ available: b.available }).eq('id', b.id);
+                await supabaseClient.from('students').update({ loans_count: s.loans_count, fines: s.fines }).eq('id', s.id);
+                await loadLibraryData(); renderLoans(); renderStudents(); updateAllStats();
                 alert(fine > 0 ? `Devolvido! Multa: R$ ${fine.toFixed(2)}` : '✅ Devolvido!');
             }
         }
         function renderLoans() {
             const c = document.getElementById('loansList');
-            if (!loans.length) { c.innerHTML = '<div class="empty-state"><i class="fas fa-hand-holding"></i><p>Nenhum empréstimo</p></div>'; return; }
-            c.innerHTML = loans.map(l => { const parts = l.return_date.split('/'); const retDate = new Date(parts[2], parts[1]-1, parts[0]); const today = new Date(); today.setHours(0,0,0,0); const overdue = l.status === 'Emprestado' && today > retDate; const cls = l.status === 'Emprestado' ? (overdue ? 'status-overdue' : 'status-loaned') : 'status-available'; const txt = l.status === 'Emprestado' ? (overdue ? 'Atrasado' : 'Emprestado') : 'Devolvido';
+            if (!loans.length) { c.innerHTML = '<div class="empty-state"><i class="fas fa-hand-holding"></i><p>Nenhum</p></div>'; return; }
+            c.innerHTML = loans.map(l => { const parts = l.return_date?.split('/') || []; const ret = parts.length ? new Date(parts[2], parts[1]-1, parts[0]) : new Date(); const today = new Date(); today.setHours(0,0,0,0); const overdue = l.status === 'Emprestado' && today > ret; const cls = l.status === 'Emprestado' ? (overdue ? 'status-overdue' : 'status-loaned') : 'status-available'; const txt = l.status === 'Emprestado' ? (overdue ? 'Atrasado' : 'Emprestado') : 'Devolvido';
                 return `<div class="table-row" style="grid-template-columns:1.8fr 1.8fr 1fr 1fr 1fr 0.8fr 100px"><div>${l.book_title}</div><div>${l.student_name}</div><div>${l.loan_date}</div><div>${l.return_date}</div><div><span class="status-badge ${cls}">${txt}</span></div><div>${l.fine>0?`R$ ${l.fine.toFixed(2)}`:'-'}</div><div>${l.status==='Emprestado'?`<i class="fas fa-check-circle action-icon" onclick="returnBook('${l.id}')"></i>`:`<i class="fas fa-eye action-icon" onclick="alert('Devolvido em: ${l.actual_return_date}')"></i>`}</div></div>`; }).join('');
+            document.getElementById('recentLoansList').innerHTML = loans.slice(-5).reverse().map(l => { const parts = l.return_date?.split('/') || []; const ret = parts.length ? new Date(parts[2], parts[1]-1, parts[0]) : new Date(); const today = new Date(); today.setHours(0,0,0,0); const overdue = l.status === 'Emprestado' && today > ret; const cls = l.status === 'Emprestado' ? (overdue ? 'status-overdue' : 'status-loaned') : 'status-available'; const txt = l.status === 'Emprestado' ? (overdue ? 'Atrasado' : 'Emprestado') : 'Devolvido';
+                return `<div class="table-row" style="grid-template-columns:2fr 2fr 1.2fr 1.2fr 1fr"><div>${l.book_title}</div><div>${l.student_name}</div><div>${l.loan_date}</div><div>${l.return_date}</div><div><span class="status-badge ${cls}">${txt}</span></div></div>`; }).join('');
         }
 
         // MULTAS
         function openFineModal() { document.getElementById('fineValue').value = fineSettings.value; document.getElementById('fineGraceDays').value = fineSettings.graceDays; document.getElementById('fineMaxValue').value = fineSettings.maxValue; document.getElementById('fineBlockLoans').checked = fineSettings.blockLoans; document.getElementById('fineModal').classList.add('active'); }
         function closeFineModal() { document.getElementById('fineModal').classList.remove('active'); }
         document.getElementById('fineForm').addEventListener('submit', async (e) => { e.preventDefault(); fineSettings = { value: parseFloat(document.getElementById('fineValue').value), graceDays: parseInt(document.getElementById('fineGraceDays').value), maxValue: parseFloat(document.getElementById('fineMaxValue').value), blockLoans: document.getElementById('fineBlockLoans').checked }; await supabaseClient.from('library_settings').upsert({ library_id: currentLibrary.id, fine_settings: fineSettings, loan_settings: librarySettings }); closeFineModal(); alert('✅ Salvo!'); });
-        function renderFines() { document.getElementById('finesList').innerHTML = '<div class="empty-state"><i class="fas fa-coins"></i><p>Em breve</p></div>'; }
+        async function payFine(sid) { const s = students.find(x => x.id == sid); if (s?.fines && confirm(`Pagar R$ ${s.fines.toFixed(2)}?`)) { s.fines = 0; await supabaseClient.from('students').update({ fines: 0 }).eq('id', sid); await loadLibraryData(); renderStudents(); renderFines(); updateAllStats(); } }
+        function renderFines() {
+            const c = document.getElementById('finesList');
+            const overdue = loans.filter(l => l.status === 'Emprestado' && (() => { const p = l.return_date?.split('/'); if (!p) return false; return new Date() > new Date(p[2], p[1]-1, p[0]); })());
+            if (!overdue.length) { c.innerHTML = '<div class="empty-state"><i class="fas fa-coins"></i><p>Nenhuma multa</p></div>'; return; }
+            c.innerHTML = overdue.map(l => { const s = students.find(x => x.id == l.student_id); const parts = l.return_date.split('/'); const ret = new Date(parts[2], parts[1]-1, parts[0]); const today = new Date(); today.setHours(0,0,0,0); const days = Math.ceil((today - ret) / 86400000); let fine = 0; if (days > fineSettings.graceDays) { fine = (days - fineSettings.graceDays) * fineSettings.value; if (fineSettings.maxValue > 0) fine = Math.min(fine, fineSettings.maxValue); }
+                return `<div class="table-row" style="grid-template-columns:1.8fr 1.8fr 1fr 1fr 1fr 100px"><div><strong>${s?.name}</strong><br><small>RA: ${s?.ra}</small></div><div>${l.book_title}</div><div>${days} dias</div><div style="color:#ef4444">R$ ${fine.toFixed(2)}</div><div><span class="status-badge status-overdue">Pendente</span></div><div><i class="fas fa-check-circle action-icon" onclick="payFine('${s?.id}')"></i></div></div>`; }).join('');
+        }
 
         // CONFIGURAÇÕES
         function loadSettings() { document.getElementById('settingsDefaultLoanDays').value = librarySettings.defaultLoanDays; document.getElementById('settingsMaxBooksPerStudent').value = librarySettings.maxBooksPerStudent; }
@@ -543,11 +580,12 @@
             const plan = plans[currentLibrary.plan] || { users_limit: '200', books_limit: '500' };
             document.getElementById('booksUsage').textContent = `${books.reduce((s,b) => s + b.quantity, 0)}/${plan.books_limit}`;
             document.getElementById('studentsUsage').textContent = `${students.length}/${plan.users_limit}`;
+            document.getElementById('booksProgress').style.width = `${Math.min((books.reduce((s,b)=>s+b.quantity,0)/parseInt(plan.books_limit)||0)*100,100)}%`;
+            document.getElementById('studentsProgress').style.width = `${Math.min((students.length/parseInt(plan.users_limit)||0)*100,100)}%`;
+            document.getElementById('notificationCount').textContent = loans.filter(l => l.status === 'Emprestado' && (() => { const p = l.return_date?.split('/'); if (!p) return false; return new Date() > new Date(p[2], p[1]-1, p[0]); })()).length;
         }
-        function showNotifications() { alert('📢 Sistema funcionando!'); }
-        function renderAll() { renderBooks(); renderStudents(); renderLoans(); updateAllStats(); }
-
-        // INICIALIZAR
+        function showNotifications() { alert('📢 Sistema Aurora v1.0'); }
+        function renderAll() { renderBooks(); renderStudents(); renderLoans(); renderFines(); updateAllStats(); }
         loadPlans();
     </script>
 </body>
