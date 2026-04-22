@@ -144,7 +144,7 @@
         </div>
     </div>
 
-    <!-- MODAL DE CATEGORIAS -->
+    <!-- MODAIS (mantidos iguais) -->
     <div class="modal" id="categoryModal">
         <div class="modal-content">
             <div class="modal-header"><h2><i class="fas fa-tags"></i> Gerenciar Categorias</h2><i class="fas fa-times close-modal" onclick="closeCategoryModal()"></i></div>
@@ -153,15 +153,14 @@
         </div>
     </div>
 
-    <!-- MODAL DE LIVRO -->
     <div class="modal" id="bookModal">
         <div class="modal-content">
             <div class="modal-header"><h2 id="modalTitle">Novo Livro</h2><i class="fas fa-times close-modal" onclick="closeBookModal()"></i></div>
             <div class="cover-upload-area" onclick="document.getElementById('coverUploadInput').click()"><i class="fas fa-cloud-upload-alt"></i><p style="color:white">Clique para fazer upload da capa</p><small style="color:#8892b0">Ou use a busca por ISBN</small><input type="file" id="coverUploadInput" accept="image/*" style="display:none" onchange="handleCoverUpload(event)"></div>
             <img id="bookCoverPreview" class="book-cover-preview" style="display:none">
             <button type="button" class="btn-secondary" onclick="clearCover()" style="margin-bottom:16px;width:100%"><i class="fas fa-trash"></i> Remover Capa</button>
-            <div class="isbn-search"><input type="text" id="isbnSearchInput" placeholder="Digite o ISBN"><button type="button" class="btn-secondary" onclick="searchByISBN()"><i class="fas fa-search"></i> Buscar</button></div>
-            <div id="isbnLoading" style="display:none;text-align:center;padding:20px;color:white"><i class="fas fa-spinner fa-spin"></i> Buscando...</div>
+            <div class="isbn-search"><input type="text" id="isbnSearchInput" placeholder="Digite o ISBN (ex: 9788533302273)"><button type="button" class="btn-secondary" onclick="searchByISBN()"><i class="fas fa-search"></i> Buscar</button></div>
+            <div id="isbnLoading" style="display:none;text-align:center;padding:20px;color:white"><i class="fas fa-spinner fa-spin"></i> Buscando informações do livro...</div>
             <form id="bookForm">
                 <input type="hidden" id="bookId"><input type="hidden" id="bookCover">
                 <div class="form-group"><label>Título</label><input type="text" id="bookTitle" required></div>
@@ -178,7 +177,6 @@
         </div>
     </div>
 
-    <!-- MODAL DE ALUNO -->
     <div class="modal" id="studentModal">
         <div class="modal-content">
             <div class="modal-header"><h2 id="studentModalTitle">Novo Aluno</h2><i class="fas fa-times close-modal" onclick="closeStudentModal()"></i></div>
@@ -194,7 +192,6 @@
         </div>
     </div>
 
-    <!-- MODAL DE EMPRÉSTIMO -->
     <div class="modal" id="loanModal">
         <div class="modal-content">
             <div class="modal-header"><h2>Novo Empréstimo</h2><i class="fas fa-times close-modal" onclick="closeLoanModal()"></i></div>
@@ -207,7 +204,6 @@
         </div>
     </div>
 
-    <!-- MODAL DE MULTAS -->
     <div class="modal" id="fineModal">
         <div class="modal-content">
             <div class="modal-header"><h2><i class="fas fa-coins"></i> Configurar Multas</h2><i class="fas fa-times close-modal" onclick="closeFineModal()"></i></div>
@@ -260,6 +256,7 @@
                 </div>
             </div>
 
+            <!-- PÁGINAS (mantidas iguais) -->
             <div class="page active" id="dashboard">
                 <div class="stats-grid">
                     <div class="stat-card"><div class="stat-header"><h3>Total de Livros</h3><div class="stat-icon"><i class="fas fa-book"></i></div></div><div class="stat-number" id="totalBooks">0</div></div>
@@ -275,10 +272,7 @@
             </div>
 
             <div class="page" id="books">
-                <div class="action-buttons">
-                    <button class="btn-primary" onclick="openBookModal()"><i class="fas fa-plus-circle"></i> Novo Livro</button>
-                    <button class="btn-secondary" onclick="openCategoryModal()"><i class="fas fa-tags"></i> Categorias</button>
-                </div>
+                <div class="action-buttons"><button class="btn-primary" onclick="openBookModal()"><i class="fas fa-plus-circle"></i> Novo Livro</button><button class="btn-secondary" onclick="openCategoryModal()"><i class="fas fa-tags"></i> Categorias</button></div>
                 <div class="table-container">
                     <div class="table-header" style="grid-template-columns:50px 2.5fr 1.2fr 1fr 0.8fr 0.8fr 1fr 100px"><div>Capa</div><div>Título / Autor</div><div>ISBN</div><div>Categoria</div><div>Qtd</div><div>Disp</div><div>Local</div><div>Ações</div></div>
                     <div id="booksList"></div>
@@ -391,31 +385,73 @@
         function handleCoverUpload(e) { const f = e.target.files[0]; if (f) { const r = new FileReader(); r.onload = ev => { currentCoverData = ev.target.result; document.getElementById('bookCoverPreview').src = currentCoverData; document.getElementById('bookCoverPreview').style.display = 'block'; document.getElementById('bookCover').value = currentCoverData; }; r.readAsDataURL(f); } }
         function clearCover() { currentCoverData = null; document.getElementById('bookCoverPreview').style.display = 'none'; document.getElementById('bookCover').value = ''; }
 
-        // ISBN
+        // ISBN - CORRIGIDO (Open Library + Google Books)
         async function searchByISBN() {
             const isbn = document.getElementById('isbnSearchInput').value.replace(/[^0-9X]/g, '');
-            if (!isbn) { alert('Digite um ISBN'); return; }
+            if (!isbn) { alert('Digite um ISBN válido (ex: 9788533302273)'); return; }
+            
             document.getElementById('isbnLoading').style.display = 'block';
+            
             try {
-                const r = await fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`);
-                const d = await r.json();
-                if (d.items?.[0]) {
-                    const b = d.items[0].volumeInfo;
-                    document.getElementById('bookTitle').value = b.title || '';
-                    document.getElementById('bookAuthor').value = b.authors?.join(', ') || '';
+                // Tentar Open Library primeiro (mais confiável para capas)
+                const olResponse = await fetch(`https://openlibrary.org/api/books?bibkeys=ISBN:${isbn}&format=json&jscmd=data`);
+                const olData = await olResponse.json();
+                
+                if (olData[`ISBN:${isbn}`]) {
+                    const book = olData[`ISBN:${isbn}`];
+                    document.getElementById('bookTitle').value = book.title || '';
+                    document.getElementById('bookAuthor').value = book.authors?.map(a => a.name).join(', ') || '';
                     document.getElementById('bookIsbn').value = isbn;
-                    document.getElementById('bookPublisher').value = b.publisher || '';
-                    document.getElementById('bookYear').value = b.publishedDate?.substring(0,4) || '';
-                    document.getElementById('bookDescription').value = b.description || '';
-                    if (b.imageLinks?.thumbnail) {
-                        currentCoverData = b.imageLinks.thumbnail.replace('http://', 'https://');
+                    document.getElementById('bookPublisher').value = book.publishers?.map(p => p.name).join(', ') || '';
+                    const publishDate = book.publish_date || '';
+                    document.getElementById('bookYear').value = publishDate.match(/\d{4}/)?.[0] || '';
+                    document.getElementById('bookDescription').value = book.notes || book.subtitle || '';
+                    
+                    // Buscar capa
+                    if (book.cover) {
+                        const coverUrl = book.cover.medium || book.cover.large;
+                        if (coverUrl) {
+                            currentCoverData = coverUrl;
+                            document.getElementById('bookCoverPreview').src = coverUrl;
+                            document.getElementById('bookCoverPreview').style.display = 'block';
+                            document.getElementById('bookCover').value = coverUrl;
+                        }
+                    }
+                    
+                    alert('✅ Livro encontrado na Open Library!');
+                    document.getElementById('isbnLoading').style.display = 'none';
+                    return;
+                }
+                
+                // Fallback: Google Books
+                const gbResponse = await fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`);
+                const gbData = await gbResponse.json();
+                
+                if (gbData.items?.[0]) {
+                    const book = gbData.items[0].volumeInfo;
+                    document.getElementById('bookTitle').value = book.title || '';
+                    document.getElementById('bookAuthor').value = book.authors?.join(', ') || '';
+                    document.getElementById('bookIsbn').value = isbn;
+                    document.getElementById('bookPublisher').value = book.publisher || '';
+                    document.getElementById('bookYear').value = book.publishedDate?.substring(0,4) || '';
+                    document.getElementById('bookDescription').value = book.description || '';
+                    
+                    if (book.imageLinks?.thumbnail) {
+                        currentCoverData = book.imageLinks.thumbnail.replace('http://', 'https://');
                         document.getElementById('bookCoverPreview').src = currentCoverData;
                         document.getElementById('bookCoverPreview').style.display = 'block';
                         document.getElementById('bookCover').value = currentCoverData;
                     }
-                    alert('✅ Livro encontrado!');
-                } else { alert('❌ Não encontrado'); }
-            } catch { alert('Erro na busca'); }
+                    
+                    alert('✅ Livro encontrado no Google Books!');
+                } else {
+                    alert('❌ Livro não encontrado. Preencha os dados manualmente.');
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro ao buscar o livro. Tente novamente.');
+            }
+            
             document.getElementById('isbnLoading').style.display = 'none';
         }
 
@@ -456,6 +492,7 @@
             } else {
                 document.getElementById('modalTitle').textContent = 'Novo Livro';
                 document.getElementById('bookForm').reset(); document.getElementById('bookId').value = '';
+                document.getElementById('isbnSearchInput').value = '';
             }
             document.getElementById('bookModal').classList.add('active');
         }
